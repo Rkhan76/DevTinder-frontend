@@ -17,6 +17,7 @@ const Login = () => {
         navigate("/home")
        }
     }catch(error){
+       toast.error('Something went wrong!')
         console.log(error)
     }
 
