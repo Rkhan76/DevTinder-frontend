@@ -1,16 +1,21 @@
 import axios from 'axios'
 import { useState } from 'react'
+import { userLogin } from '../api/authApi'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 const Login = () => {
   const [emailId, setEmailId] = useState("")
   const [password, setPassword] = useState("")
+  const navigate = useNavigate()
 
   const handleLogin = async()=>{
     try{
-       const res = await axios.post("",{
-        emailId,
-        password
-       })
+       const res = await userLogin(emailId, password)
+       console.log(res.success)
+       if(res.success){
+        
+        navigate("/home")
+       }
     }catch(error){
         console.log(error)
     }
@@ -29,7 +34,7 @@ const Login = () => {
                 value={emailId}
                 onChange={(e) => setEmailId(e.target.value)}
                 className="input"
-                placeholder="Type here"
+                placeholder="example@gmail.com"
               />
               <legend className="fieldset-legend">Password</legend>
               <input
@@ -37,7 +42,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input"
-                placeholder="Type here"
+                placeholder="12345"
               />
             </fieldset>
           </div>
