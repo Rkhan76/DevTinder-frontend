@@ -4,6 +4,7 @@ import Login from './components/Login'
 import Profile from './components/Profile'
 import ProtectedRoute from './components/ProtectedRoutes'
 import RedirectBasedOnAuth from './components/RedirectBasedOnAuth'
+import Signup from './components/Signup'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Body />}>
           <Route index element={<RedirectBasedOnAuth />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup/>} />
           <Route
             path="/home"
             element={
