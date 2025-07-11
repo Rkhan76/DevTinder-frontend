@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { userLogin, userSignup } from '../api/authApi'
 import { Navigate, useNavigate } from 'react-router-dom'
 
@@ -12,6 +13,7 @@ const Signup = () => {
     try {
       const res = await userSignup(emailId, password)
       if (res.success) {
+         toast.success('Signup Successful!')
         navigate('/login')
       }
     } catch (error) {
