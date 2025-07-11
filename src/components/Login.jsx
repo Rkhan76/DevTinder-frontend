@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useState } from 'react'
 import { userLogin } from '../api/authApi'
 import { Navigate, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 const Login = () => {
   const [emailId, setEmailId] = useState("")
@@ -11,9 +12,8 @@ const Login = () => {
   const handleLogin = async()=>{
     try{
        const res = await userLogin(emailId, password)
-       console.log(res.success)
        if(res.success){
-        
+        toast.success('Login Successful!')
         navigate("/home")
        }
     }catch(error){
