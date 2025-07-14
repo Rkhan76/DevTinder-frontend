@@ -45,3 +45,21 @@ export const userSignup = async (email, password) => {
     throw error
   }
 }
+
+export const signInWithGoogle = async(code)=>{
+  const api = `${BASE_URL}${import.meta.env.VITE_API_USER_GOOGLE_LOGIN}`
+
+  console.log("code ", code)
+  console.log("api ", api)
+  try {
+    const response = await axios.post(api,{code})
+
+    console.log(response)
+   
+    return response.data
+
+  } catch (error) {
+    console.error('Signup failed:', error)
+    throw error
+  }
+}

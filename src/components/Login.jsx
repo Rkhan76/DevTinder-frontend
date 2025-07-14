@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { userLogin } from '../api/authApi'
 import { Navigate, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import LoginWithGoogle from './LoginWithGoogle'
 
 const Login = () => {
   const [emailId, setEmailId] = useState("")
@@ -50,6 +51,7 @@ const Login = () => {
           <div className="card-actions justify-center">
             <button onClick={handleLogin} className="btn btn-primary">Login</button>
           </div>
+          <LoginWithGoogle/>
         </div>
       </div>
     </div>
