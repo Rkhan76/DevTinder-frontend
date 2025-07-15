@@ -6,10 +6,11 @@ import Profile from './components/Profile'
 import ProtectedRoute from './components/ProtectedRoutes'
 import RedirectBasedOnAuth from './components/RedirectBasedOnAuth'
 import Signup from './components/Signup'
+import { ThemeProvider } from './ThemeContext'
 
 function App() {
   return (
-    <>
+    <ThemeProvider>
       <BrowserRouter basename="/">
         <Routes>
           <Route path="/" element={<Body />}>
@@ -28,7 +29,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       <Toaster position="top-center" reverseOrder={false} />
-    </>
+    </ThemeProvider>
   )
 }
 
