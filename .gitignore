@@ -7,9 +7,42 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
+# Environment files
+.env*
+!.env.example
+.env.local
+.env.development
+.env.production
+.env.test
+.env.backup
+.env.*.local
+
+# Sensitive files
+*.key
+*.pem
+*.cert
+*.crt
+*.secret
+*.token
+*.pass
+*.priv
+firebase-config.json
+google-services.json
+service-account.json
+auth_config.json
+aws-config.json
+
+# Build directories
 dist
 dist-ssr
+build
+.next
+out
+
+# Dependencies
+node_modules
+
+# Local development
 *.local
 
 # Editor directories and files
@@ -22,4 +55,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.env
+
+# Testing
+coverage
+.nyc_output
+
+# Debug
+debug
+*.debug
+
+# Cache
+.cache
+.temp
+
+# System Files
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
