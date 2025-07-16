@@ -6,6 +6,7 @@ import { IoIosNotificationsOutline } from 'react-icons/io'
 import { CiHeart } from 'react-icons/ci'
 import { FiMessageSquare } from 'react-icons/fi'
 import logo from '../assets/logo.png'
+import toast from 'react-hot-toast'
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -15,22 +16,23 @@ const Navbar = () => {
 
   const handleLogout = () => {
     Cookies.remove('token')
-    setIsOpen(false)
+    console.log("i am clicked on navbar logout")
+    toast.success("Logout successfully")
     navigate('/login')
   }
 
   // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  //       setIsOpen(false)
+  //     }
+  //   }
+  //   document.addEventListener('mousedown', handleClickOutside)
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside)
+  //   }
+  // }, [])
 
   // Close dropdown when clicking any item inside
   const handleDropdownClick = () => {
@@ -41,7 +43,7 @@ const Navbar = () => {
     <nav className="navbar bg-base-300 shadow-sm px-4 sticky top-0 z-50">
       <div className="flex-1 flex items-center gap-4">
         <Link to="/" className="flex items-center gap-2 hover:opacity-90">
-          <img src={logo} alt="logo" className="w-14 h-14 object-contain drop-shadow-md" />
+          <img src={logo} alt="logo" className="w-16 h-14 object-contain drop-shadow-md" />
         </Link>
         <ul className="flex gap-3 ml-2">
           <li>
