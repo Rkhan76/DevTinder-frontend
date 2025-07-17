@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
 import { IoMdImages } from 'react-icons/io'
+import { handledecodeToken } from '../utils/userDetailByToken'
+import { addPost } from '../api/postApi'
 
 const CreatePost = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -28,8 +30,9 @@ const CreatePost = () => {
     }
   }
 
-  const handlePost = () => {
-    // Here you would handle posting logic
+  const handlePost = async() => {
+    const res = await addPost(content)
+    console.log(res)
     handleCloseModal()
   }
 

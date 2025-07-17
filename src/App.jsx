@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoutes'
 import RedirectBasedOnAuth from './components/RedirectBasedOnAuth'
 import Signup from './components/Signup'
 import { ThemeProvider } from './ThemeContext'
+import Home from './components/Home'
 
 function App() {
   return (
@@ -20,6 +21,14 @@ function App() {
 
             <Route
               path="/home"
+              element={
+                <ProtectedRoute>
+                  <Home/>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
               element={
                 <ProtectedRoute>
                   <Profile />

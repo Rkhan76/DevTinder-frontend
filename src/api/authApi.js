@@ -1,65 +1,62 @@
-import axios from 'axios'
+import axios from '../utils/axiosConfig'
 import Cookies from 'js-cookie'
  
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
-// const api = axios.create({
-//   baseURL: BASE_URL,
-//   withCredentials: true, // allows cookies to be sent in requests
-// })
 
-export const userLogin = async (email,password) => {
-    const api = `${BASE_URL}${import.meta.env.VITE_API_USER_LOGIN}`
+export const userLogin = async (email, password) => {
+  const api = `${BASE_URL}${import.meta.env.VITE_API_USER_LOGIN}`
   try {
     const response = await axios.post(api, { email, password })
-
-    const token = response.data.data.token
-   
-    if (token) {
-        Cookies.set('token', token, {
-          expires: 7,
-          path: '/',
-          secure: false,
-        })
-    }
-
     return response.data
   } catch (error) {
     console.error('Login failed:', error)
-    throw error 
+    throw error
   }
 }
+
 
 export const userSignup = async (email, password) => {
   const api = `${BASE_URL}${import.meta.env.VITE_API_USER_REGISTER}`
   try {
     const response = await axios.post(api, { email, password })
-
-    console.log(response)
-   
     return response.data
-
   } catch (error) {
     console.error('Signup failed:', error)
     throw error
   }
 }
 
-export const signInWithGoogle = async(code)=>{
+
+export const signInWithGoogle = async (code) => {
   const api = `${BASE_URL}${import.meta.env.VITE_API_USER_GOOGLE_LOGIN}`
-
-  console.log("code ", code)
-  console.log("api ", api)
   try {
-    const response = await axios.post(api,{code})
-
-    console.log(response)
-   
+    const response = await axios.post(api, { code })
     return response.data
-
   } catch (error) {
-    console.error('Signup failed:', error)
+    console.error('Google sign-in failed:', error)
     throw error
   }
 }
+
+export const isAuthenticated = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/auth/check`)
+    return response.status === 200
+  } catch (error) {
+    return false
+  }
+}
+
+export const userLogout = async () => {
+  const api = `${BASE_URL}${import.meta.env.VITE_API_LOGOUT}`
+  try {
+    const response = await axios.get(api)
+    return response.data
+  } catch (error) {
+    console.error('Logout failed:', error)
+    throw error
+  }
+}
+

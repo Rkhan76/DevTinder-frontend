@@ -20,6 +20,7 @@ const Login = () => {
     try {
       setLoading(true)
       const res = await userLogin(emailId, password)
+      console.log(res.success, " response on login")
       if (res.success) {
         toast.success('Login Successful!')
         navigate('/home')

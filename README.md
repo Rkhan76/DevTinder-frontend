@@ -90,3 +90,4 @@ This project is licensed under the [MIT License](LICENSE).
 <!-- Work to do  on 16-07-2025 -->
 1- design login and signup page
 2- showing loading effect while login
+3- dont send the header with every request set axios globally

@@ -7,6 +7,7 @@ import { CiHeart } from 'react-icons/ci'
 import { FiMessageSquare } from 'react-icons/fi'
 import logo from '../assets/logo.png'
 import toast from 'react-hot-toast'
+import { userLogout } from '../api/authApi'
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -14,12 +15,20 @@ const Navbar = () => {
   const dropdownRef = useRef(null)
   const { theme, toggleTheme } = useTheme()
 
-  const handleLogout = () => {
-    Cookies.remove('token')
-    console.log("i am clicked on navbar logout")
-    toast.success("Logout successfully")
-    navigate('/login')
-  }
+ const handleLogout = async () => {
+   try {
+     const res = await userLogout()
+     if (res.success) {
+       toast.success('Logged out successfully')
+       navigate('/login')
+     } else {
+       toast.error(res.message || 'Logout failed')
+     }
+   } catch (error) {
+     toast.error('Something went wrong during logout')
+     console.error('Logout error:', error)
+   }
+ }
 
   // Close dropdown when clicking outside
   // useEffect(() => {
@@ -116,7 +125,7 @@ const Navbar = () => {
             </li>
             <div className="divider my-0" />
             <li>
-              <Link to="/" className="justify-between font-semibold hover:bg-base-200">
+              <Link to="/profile" className="justify-between font-semibold hover:bg-base-200">
                 Profile
               </Link>
             </li>

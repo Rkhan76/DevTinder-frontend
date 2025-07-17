@@ -1,15 +1,24 @@
-// src/components/RedirectBasedOnAuth.jsx
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import Cookies from 'js-cookie'
+import { isAuthenticated } from '../api/authApi'
 
 const RedirectBasedOnAuth = () => {
-  const token = Cookies.get('token')
+  const [loading, setLoading] = useState(true)
+  const [auth, setAuth] = useState(false)
 
-  return token ? (
-    <Navigate to="/home" replace />
-  ) : (
-    <Navigate to="/login" replace />
-  )
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuth = await isAuthenticated()
+      setAuth(isAuth)
+      setLoading(false)
+    }
+
+    checkAuth()
+  }, [])
+
+  if (loading) return <div>Loading...</div>
+
+  return <Navigate to={auth ? '/home' : '/login'} replace />
 }
 
 export default RedirectBasedOnAuth

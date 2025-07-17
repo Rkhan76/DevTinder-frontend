@@ -1,16 +1,24 @@
-// src/components/ProtectedRoute.jsx
 import { Navigate } from 'react-router-dom'
-import Cookies from 'js-cookie'
+import { useEffect, useState } from 'react'
+import { isAuthenticated } from '../api/authApi'
 
 const ProtectedRoute = ({ children }) => {
-  const token = Cookies.get('token')
-  console.log("token on protected routes", token)
+  const [loading, setLoading] = useState(true)
+  const [auth, setAuth] = useState(false)
 
-  if (!token) {
-    return <Navigate to="/login" replace />
-  }
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuth = await isAuthenticated()
+      setAuth(isAuth)
+      setLoading(false)
+    }
 
-  return children
+    checkAuth()
+  }, [])
+
+  if (loading) return <div>Loading...</div>
+
+  return auth ? children : <Navigate to="/login" replace />
 }
 
 export default ProtectedRoute
