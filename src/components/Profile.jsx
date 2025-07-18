@@ -1,5 +1,6 @@
 import coverimage from '../assets/mountain-background.jpg'
 import ProfileButton from './ProfileButton'
+import UserFeed from './UserFeed'
 
 const Profile = () => {
   return (
@@ -20,6 +21,12 @@ const Profile = () => {
           <div>
             <ProfileButton text={'Friends'} />
             <ProfileButton text={'Photos'} />
+          </div>
+        </div>
+        <div className="w-full bg-red-300 flex justify-between">
+          <div className="w-3/12 bg-green-300">Basic Infos</div>
+          <div className="w-8/12 bg-orange-400">
+          <UserFeed/>
           </div>
         </div>
         {/* Add more profile content below */}

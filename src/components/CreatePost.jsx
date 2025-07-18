@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { IoMdImages } from 'react-icons/io'
 import { handledecodeToken } from '../utils/userDetailByToken'
 import { addPost } from '../api/postApi'
+import toast from 'react-hot-toast'
 
 const CreatePost = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -32,7 +33,11 @@ const CreatePost = () => {
 
   const handlePost = async() => {
     const res = await addPost(content)
-    console.log(res)
+    if(res.success){
+      console.log("post created successfully")
+      console.log(res.post.content)
+      toast.success("Post created successfully")
+    }
     handleCloseModal()
   }
 

@@ -8,16 +8,14 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL
 export const addPost = async (content) => {
   const api = `${BASE_URL}${import.meta.env.VITE_API_ADD_POST}`
   try {
-    const {userId} = handledecodeToken(Cookies.get('token'))
-    console.log(userId, " decoded token on addPost api")
-    const response = await axios.post(api, { content, userId })
-
-   console.log(response)
-   
-
+    const response = await axios.post(api, { content })
     return response.data
   } catch (error) {
     console.error('Login failed:', error)
     throw error
   }
+}
+
+export const fetchPosts = async (page) => {
+  return axios.get(`/posts?page=${page}&limit=10`)
 }
