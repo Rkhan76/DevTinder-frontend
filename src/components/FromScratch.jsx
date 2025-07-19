@@ -1,5 +1,5 @@
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
-import { PostCard } from './PostCard'
+import PostCard from './PostCard'
 import ProfileButton from './ProfileButton'
 
 export const FromScratch = ({ posts, fetchData, loading, error }) => {
