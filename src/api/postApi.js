@@ -19,3 +19,7 @@ export const addPost = async (content) => {
 export const fetchPosts = async (page) => {
   return axios.get(`/post/self?page=${page}&limit=10`)
 }
+
+export const fetchAllPosts = async (page) => {
+  return axios.get(`/post/all?page=${page}&limit=10`)
+}

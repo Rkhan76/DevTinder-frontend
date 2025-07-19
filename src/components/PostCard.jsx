@@ -3,7 +3,7 @@ export const PostCard = ({ post }) => {
   return (
     <div
       key={post.id}
-      className="bg-base-100 rounded-xl shadow p-4 flex flex-col gap-2"
+      className="bg-base-100 rounded-xl shadow p-4 flex flex-col gap-2 mt-10"
     >
       <div className="flex items-center gap-3 mb-1">
         <div className="avatar">
@@ -19,7 +19,7 @@ export const PostCard = ({ post }) => {
         <div>
           <div className="font-semibold">{`Rakhshan Khan`}</div>{' '}
           //post.user.name
-          <div className="text-xs text-base-content/60">{`1.45 am`}</div>{' '}
+          <div className="text-xs text-base-content/60">1.45 am</div>{' '}
           //post.time
         </div>
       </div>

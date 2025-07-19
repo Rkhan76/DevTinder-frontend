@@ -1,4 +1,5 @@
 import coverimage from '../assets/mountain-background.jpg'
+import BasicInfo from './BasicInfo'
 import ProfileButton from './ProfileButton'
 import UserFeed from './UserFeed'
 
@@ -23,9 +24,11 @@ const Profile = () => {
             <ProfileButton text={'Photos'} />
           </div>
         </div>
-        <div className="w-full bg-red-300 flex justify-between">
-          <div className="w-3/12 bg-green-300">Basic Infos</div>
-          <div className="w-8/12 bg-orange-400">
+        <div className="w-full flex justify-between">
+          <div className="w-3/12">
+          <BasicInfo/>
+          </div>
+          <div className="w-8/12 ">
           <UserFeed/>
           </div>
         </div>

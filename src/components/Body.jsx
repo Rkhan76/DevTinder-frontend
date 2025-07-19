@@ -6,10 +6,10 @@ import { Outlet } from 'react-router-dom'
 
 const Body = () => {
   return (
-    <>
+    <div className="bg-[#eeeae7]">
       <Navbar />
-      <Outlet/>
-    </>
+      <Outlet />
+    </div>
   )
 }
 
