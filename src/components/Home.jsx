@@ -2,7 +2,7 @@ import React from 'react'
 import CreatePost from './CreatePost'
 import Feed from './Feed'
 import SuggestedFriends from './SuggestedFriends'
-import PostCardExample from './ExamplePostCard'
+
 
 const Home = () => {
   return (
@@ -16,7 +16,6 @@ const Home = () => {
           <SuggestedFriends />
         </aside>
       </main>
-      <PostCardExample/>
     </>
   )
   

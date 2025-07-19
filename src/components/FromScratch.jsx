@@ -5,7 +5,6 @@ import ProfileButton from './ProfileButton'
 export const FromScratch = ({ posts, fetchData, loading, error }) => {
   useInfiniteScroll(fetchData)
 
-  console.log("posts are here on fromscratch component ", posts)
   return (
     <div>
       <div className="flex justify-between bg-base-100 py-1 px-2 rounded-xl border border-gray-300">
@@ -18,6 +17,7 @@ export const FromScratch = ({ posts, fetchData, loading, error }) => {
           </div>
       </div>
       <div>
+        {console.log(posts, " posts is here on FromScratch")}
         {posts.map((post, index) => (
           <PostCard post={post} key={index} />
         ))}
