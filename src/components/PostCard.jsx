@@ -12,7 +12,7 @@ const PostCard = ({post = {
     author: {
       _id: authorId,
       email,
-      name: authorName,
+      fullName : authorName,
       image: profilePic
     }},
   user = {
@@ -59,8 +59,8 @@ const PostCard = ({post = {
    }
 
    
-    const avatarColor = getAvatarColor(post.author.name || user.name)
-    const userInitials = getInitials(post.author.name || user.name)
+    const avatarColor = getAvatarColor(post.author.fullName || user.name)
+    const userInitials = getInitials(post.author.fullName || user.name)
    
 
   return (

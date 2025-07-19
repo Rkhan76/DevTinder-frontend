@@ -6,23 +6,42 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import LoginWithGoogle from './LoginWithGoogle'
 
 const Signup = () => {
+  const [fullName, setFullName] = useState('')
   const [emailId, setEmailId] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSignup = async () => {
+    // Validate required fields
+    if (!fullName.trim()) {
+      toast.error('Full name is required!')
+      return
+    }
+    if (!emailId.trim()) {
+      toast.error('Email is required!')
+      return
+    }
+    if (!password.trim()) {
+      toast.error('Password is required!')
+      return
+    }
+
+    setLoading(true)
     try {
-      const res = await userSignup(emailId, password)
+      const res = await userSignup(fullName, emailId, password)
       if (res.success) {
-         toast.success('Signup Successful!')
+        toast.success('Signup Successful!')
         navigate('/login')
       }
     } catch (error) {
       toast.error('Something went wrong!')
       console.log(error)
+    } finally {
+      setLoading(false)
     }
   }
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left side: Blue background with text */}
@@ -82,10 +101,21 @@ const Signup = () => {
             <div>
               <input
                 type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300 text-lg"
+                placeholder="Full Name"
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="email"
                 value={emailId}
                 onChange={(e) => setEmailId(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300 text-lg"
                 placeholder="jennadavis@gmail.com"
+                required
               />
             </div>
             <div>
@@ -95,34 +125,33 @@ const Signup = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300 text-lg"
                 placeholder="••••••••"
+                required
               />
             </div>
             {loading ? (
-              <div className='className="w-full py-3 rounded-lg bg-[#4576C7] text-white font-semibold text-lg shadow hover:bg-[#335fa3] transition"'>
-                <button className="btn btn-outline border-primary text-primary hover:bg-primary hover:text-white">
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Logging In
-                </button>
-              </div>
+              <button className="w-full py-3 rounded-lg bg-[#4576C7] text-white font-semibold text-lg shadow hover:bg-[#335fa3] transition flex items-center justify-center">
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Creating Account...
+              </button>
             ) : (
               <button
                 onClick={handleSignup}

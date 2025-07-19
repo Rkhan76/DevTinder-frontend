@@ -17,10 +17,16 @@ export const userLogin = async (email, password) => {
 }
 
 
-export const userSignup = async (email, password) => {
+export const userSignup = async (fullName, emailId, password) => {
   const api = `${BASE_URL}${import.meta.env.VITE_API_USER_REGISTER}`
+
   try {
-    const response = await axios.post(api, { email, password })
+    console.log(fullName, emailId, password)
+    const response = await axios.post(api, {
+      fullName,
+      email: emailId,
+      password,
+    })
     return response.data
   } catch (error) {
     console.error('Signup failed:', error)
