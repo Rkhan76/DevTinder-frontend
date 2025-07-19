@@ -17,5 +17,5 @@ export const addPost = async (content) => {
 }
 
 export const fetchPosts = async (page) => {
-  return axios.get(`/posts?page=${page}&limit=10`)
+  return axios.get(`/post/self?page=${page}&limit=10`)
 }
