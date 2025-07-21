@@ -4,10 +4,13 @@ import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie' // Make sure you import this
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../redux/slices/authSlice'
 
 const LoginWithGoogle = () => {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+    const dispatch = useDispatch()
 
   // Define login function here
   const login = useGoogleLogin({
@@ -17,13 +20,8 @@ const LoginWithGoogle = () => {
         console.log(res, 'response in signInWithGoogle')
 
         if (res.success) {
-          if (res.token) {
-            Cookies.set('token', res.token, {
-              expires: 7,
-              path: '/',
-              secure: false,
-            })
-          }
+          console.log("hey i am succesfull")
+           dispatch(setUser(res?.user))
           toast.success('Successfully Logged In')
           navigate('/home')
         } else {
@@ -31,6 +29,7 @@ const LoginWithGoogle = () => {
         }
       } catch (error) {
         setLoading(false)
+        console.log("error i am getting when login with googel ", error)
         toast.error('Login failed')
       }
     },

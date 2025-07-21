@@ -8,17 +8,26 @@ import { FiMessageSquare } from 'react-icons/fi'
 import logo from '../assets/logo.png'
 import toast from 'react-hot-toast'
 import { userLogout } from '../api/authApi'
+import { useSelector } from 'react-redux'
+import { getAvatarColor, getInitials } from '../utils/userAvtar'
+import { useDispatch } from 'react-redux'
+import { logoutUser } from '../redux/slices/authSlice'
 
 const Navbar = () => {
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef(null)
   const { theme, toggleTheme } = useTheme()
+  const user = useSelector((state) => state.auth.user)
+  const dispatch = useDispatch()
+
+  
 
  const handleLogout = async () => {
    try {
      const res = await userLogout()
      if (res.success) {
+      dispatch(logoutUser())
        toast.success('Logged out successfully')
        navigate('/login')
      } else {
@@ -52,21 +61,34 @@ const Navbar = () => {
     <nav className="navbar bg-base-300 shadow-sm px-4 sticky top-0 z-50">
       <div className="flex-1 flex items-center gap-4">
         <Link to="/" className="flex items-center gap-2 hover:opacity-90">
-          <img src={logo} alt="logo" className="w-16 h-14 object-contain drop-shadow-md" />
+          <img
+            src={logo}
+            alt="logo"
+            className="w-16 h-14 object-contain drop-shadow-md"
+          />
         </Link>
         <ul className="flex gap-3 ml-2">
           <li>
-            <button className="btn btn-circle btn-ghost text-2xl tooltip tooltip-bottom" data-tip="Notifications">
+            <button
+              className="btn btn-circle btn-ghost text-2xl tooltip tooltip-bottom"
+              data-tip="Notifications"
+            >
               <IoIosNotificationsOutline />
             </button>
           </li>
           <li>
-            <button className="btn btn-circle btn-ghost text-2xl tooltip tooltip-bottom" data-tip="Likes">
+            <button
+              className="btn btn-circle btn-ghost text-2xl tooltip tooltip-bottom"
+              data-tip="Likes"
+            >
               <CiHeart />
             </button>
           </li>
           <li>
-            <button className="btn btn-circle btn-ghost text-2xl tooltip tooltip-bottom" data-tip="Messages">
+            <button
+              className="btn btn-circle btn-ghost text-2xl tooltip tooltip-bottom"
+              data-tip="Messages"
+            >
               <FiMessageSquare />
             </button>
           </li>
@@ -79,7 +101,9 @@ const Navbar = () => {
           className="input input-bordered w-32 md:w-56 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <div
-          className={`dropdown dropdown-end mx-1 ${isOpen ? 'dropdown-open' : ''}`}
+          className={`dropdown dropdown-end mx-1 ${
+            isOpen ? 'dropdown-open' : ''
+          }`}
         >
           <div
             tabIndex={0}
@@ -88,12 +112,24 @@ const Navbar = () => {
             onClick={() => setIsOpen(!isOpen)}
             ref={dropdownRef}
           >
-            <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
-              <img
-                alt="User avatar"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
-            </div>
+            {user?.image ? (
+              <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
+                <img
+                  alt="User avatar"
+                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                />
+              </div>
+            ) : (
+              <div
+                className={`flex items-center justify-center w-10 h-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden ${getAvatarColor(
+                  user?.fullName
+                )}`}
+              >
+                <p className="flex items-center justify-center leading-none h-full">
+                  {getInitials(user?.fullName)}
+                </p>
+              </div>
+            )}
           </div>
 
           <ul
@@ -105,9 +141,9 @@ const Navbar = () => {
             <li className="mb-1">
               <button
                 className="flex items-center gap-2 px-2 py-2 rounded hover:bg-base-200 transition-colors font-medium"
-                onClick={e => {
-                  e.stopPropagation();
-                  toggleTheme();
+                onClick={(e) => {
+                  e.stopPropagation()
+                  toggleTheme()
                 }}
               >
                 {theme === 'dark' ? (
@@ -125,7 +161,10 @@ const Navbar = () => {
             </li>
             <div className="divider my-0" />
             <li>
-              <Link to="/profile" className="justify-between font-semibold hover:bg-base-200">
+              <Link
+                to="/profile"
+                className="justify-between font-semibold hover:bg-base-200"
+              >
                 Profile
               </Link>
             </li>

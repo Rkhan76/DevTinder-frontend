@@ -1,15 +1,19 @@
-import axios from 'axios'
+
 import { useState } from 'react'
 import { userLogin } from '../api/authApi'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import LoginWithGoogle from './LoginWithGoogle'
+import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/slices/authSlice';
 
 const Login = () => {
   const [emailId, setEmailId] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+
 
   const handleLogin = async () => {
     if (!emailId || !password) {
@@ -20,8 +24,10 @@ const Login = () => {
     try {
       setLoading(true)
       const res = await userLogin(emailId, password)
-      console.log(res.success, " response on login")
+      const userData = res.data.user
+     
       if (res.success) {
+        dispatch(setUser(userData))
         toast.success('Login Successful!')
         navigate('/home')
       }

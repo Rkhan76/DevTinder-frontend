@@ -86,8 +86,9 @@ Contributions are welcome! Please open an issue or submit a pull request for imp
 ## 📄 License
 This project is licensed under the [MIT License](LICENSE). 
 
+<!-- Problem i am facing during project developemnt -->
+1- problem of erasing the redux store data on refreshing the application  => soln use redux-presistance
+2- 
 
-<!-- Work to do  on 16-07-2025 -->
-1- design login and signup page
-2- showing loading effect while login
-3- dont send the header with every request set axios globally
+<!-- Work to do -->
+1- navbar avtar show user image and if image is not present then show the name letter
