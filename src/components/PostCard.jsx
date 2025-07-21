@@ -64,9 +64,9 @@ const PostCard = ({ post }) => {
             />
           ) : (
             <div
-              className={`flex items-center justify-center w-12 h-12 rounded-full  border-2 border-gray-200 font-semibold text-gray-700 text-lg shadow-sm`}
+              className={`${getAvatarColor(fullName)} flex items-center justify-center w-12 h-12 rounded-full  border-2 border-gray-200 font-semibold text-gray-700 text-lg shadow-sm`}
             >
-              {/* {userInitials} */}
+              {getInitials(fullName)}
             </div>
           )}
           <div className="flex flex-col">
