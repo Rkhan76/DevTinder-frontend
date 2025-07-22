@@ -29,6 +29,7 @@ const PostCard = ({ post }) => {
   const [liked, setLiked] = useState(isLiked)
   const [likeCount, setLikeCount] = useState(likesCount)
 
+
   const handleLike = async () => {
     try {
       const updated = await onLikePost(postId)
@@ -96,10 +97,10 @@ const PostCard = ({ post }) => {
       </div>
 
       {/* Image */}
-      {media?.url && (
+      {media[0]?.url && (
         <div className="relative bg-white">
           <img
-            src={media.url}
+            src={media[0].url}
             alt="Post content"
             className="w-full h-auto block object-cover"
           />

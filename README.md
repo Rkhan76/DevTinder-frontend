@@ -92,4 +92,5 @@ This project is licensed under the [MIT License](LICENSE).
 
 <!-- Work to do -->
 1- navbar avtar show user image and if image is not present then show the name letter  =>  // Done
-2- show the image of the user in his post if present or show the letter of the name =>
+2- show the image of the user in his post if present or show the letter of the name => Done
+3- Add image to the post and save image to a cloud like cloudinary or firebase => 

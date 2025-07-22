@@ -8,6 +8,7 @@ const CreatePost = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [content, setContent] = useState('')
   const [image, setImage] = useState(null)
+  const [creatingPostLoading, setCreatingPostLoading ] = useState(false)
   const [imagePreview, setImagePreview] = useState(null)
   const fileInputRef = useRef(null)
 
@@ -31,15 +32,35 @@ const CreatePost = () => {
     }
   }
 
-  const handlePost = async() => {
-    const res = await addPost(content)
-    if(res.success){
-      console.log("post created successfully")
-      console.log(res.post.content)
-      toast.success("Post created successfully")
-    }
-    handleCloseModal()
-  }
+ const handlePost = async () => {
+   if (!content.trim() && !image) {
+     toast.error('Post content or image required')
+     return
+   }
+
+   const formData = new FormData()
+   formData.append('content', content)
+   if (image) {
+     formData.append('media', image) // key must match multer field name
+   }
+
+   try {
+     setCreatingPostLoading(true)
+     const res = await addPost(formData)
+     if (res.success) {
+       toast.success('Post created successfully')
+       console.log(res.post)
+       handleCloseModal()
+     } else {
+       toast.error(res.message || 'Failed to create post')
+     }
+     setCreatingPostLoading(false)
+   } catch (err) {
+     console.error(err)
+     setCreatingPostLoading(false)
+     toast.error('Something went wrong while posting')
+   }
+ }
 
   return (
     <>
@@ -47,7 +68,10 @@ const CreatePost = () => {
       <div className="w-full max-w-xl flex items-center gap-4 mb-6">
         <div className="avatar">
           <div className="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-            <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="User avatar" />
+            <img
+              src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+              alt="User avatar"
+            />
           </div>
         </div>
         <div
@@ -56,21 +80,41 @@ const CreatePost = () => {
         >
           Start a post...
         </div>
-        <button className="btn btn-ghost btn-circle text-2xl" onClick={e => {e.stopPropagation(); fileInputRef.current.click();}}>
+        <button
+          className="btn btn-ghost btn-circle text-2xl"
+          onClick={(e) => {
+            e.stopPropagation()
+            fileInputRef.current.click()
+          }}
+        >
           <IoMdImages />
         </button>
-        <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageChange} />
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleImageChange}
+        />
       </div>
 
       {/* Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-xl shadow-lg w-full max-w-3xl p-12 relative">
-            <button className="absolute top-2 right-2 btn btn-sm btn-circle btn-ghost" onClick={handleCloseModal}>&times;</button>
+            <button
+              className="absolute top-2 right-2 btn btn-sm btn-circle btn-ghost"
+              onClick={handleCloseModal}
+            >
+              &times;
+            </button>
             <div className="flex items-center gap-3 mb-4">
               <div className="avatar">
                 <div className="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="User avatar" />
+                  <img
+                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                    alt="User avatar"
+                  />
                 </div>
               </div>
               <div className="font-semibold">You</div>
@@ -79,27 +123,82 @@ const CreatePost = () => {
               className="textarea textarea-bordered w-full min-h-[260px] max-h-[500px] resize-none focus:outline-none mb-1 text-xl"
               placeholder="What's on your mind?"
               value={content}
-              onChange={e => setContent(e.target.value)}
-              maxLength={WORD_LIMIT * 10} // Prevents absurdly long input
+              onChange={(e) => setContent(e.target.value)}
+              maxLength={WORD_LIMIT * 10}
             />
             <div className="flex items-center justify-between mb-2">
-              <span className={`text-sm ${overLimit ? 'text-error font-semibold' : 'text-base-content/60'}`}>{wordCount} / {WORD_LIMIT} words</span>
-              {overLimit && <span className="text-error text-xs ml-2">Word limit exceeded!</span>}
+              <span
+                className={`text-sm ${
+                  overLimit
+                    ? 'text-error font-semibold'
+                    : 'text-base-content/60'
+                }`}
+              >
+                {wordCount} / {WORD_LIMIT} words
+              </span>
+              {overLimit && (
+                <span className="text-error text-xs ml-2">
+                  Word limit exceeded!
+                </span>
+              )}
             </div>
             {imagePreview && (
               <div className="mb-3">
-                <img src={imagePreview} alt="Preview" className="rounded-lg max-h-60 object-contain mx-auto" />
-                <button className="btn btn-xs btn-error mt-2" onClick={() => {setImage(null); setImagePreview(null);}}>Remove Image</button>
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="rounded-lg max-h-60 object-contain mx-auto"
+                />
+                <button
+                  className="btn btn-xs btn-error mt-2"
+                  onClick={() => {
+                    setImage(null)
+                    setImagePreview(null)
+                  }}
+                >
+                  Remove Image
+                </button>
               </div>
             )}
             <div className="flex gap-2 mt-2 justify-end">
-              <button className="btn btn-ghost" onClick={handleCloseModal}>Cancel</button>
-              <button className="btn btn-primary" onClick={handlePost} disabled={(!content.trim() && !image) || overLimit}>Post</button>
+              <button className="btn btn-ghost" onClick={handleCloseModal}>
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={handlePost}
+                disabled={(!content.trim() && !image) || overLimit}
+              >
+                Post
+              </button>
             </div>
-            <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageChange} />
-            <button className="btn btn-ghost btn-circle text-2xl absolute bottom-8 left-8" onClick={e => {e.preventDefault(); fileInputRef.current.click();}}>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+            />
+            <button
+              className="btn btn-ghost btn-circle text-2xl absolute bottom-8 left-8"
+              onClick={(e) => {
+                e.preventDefault()
+                fileInputRef.current.click()
+              }}
+            >
               <IoMdImages />
             </button>
+
+            {/* Progress Bar Loading Indicator */}
+            {creatingPostLoading && (
+              <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center rounded-xl gap-2">
+                <span className="text-lg font-medium">Creating Post...</span>
+                <progress className="progress progress-primary w-56"></progress>
+                <span className="text-sm text-gray-500">
+                  Uploading your content
+                </span>
+              </div>
+            )}
           </div>
         </div>
       )}

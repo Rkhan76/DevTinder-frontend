@@ -3,10 +3,10 @@ import axios from '../utils/axiosConfig'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 
-export const addPost = async (content) => {
+export const addPost = async (formData) => {
   const api = `${BASE_URL}${import.meta.env.VITE_API_ADD_POST}`
   try {
-    const response = await axios.post(api, { content })
+    const response = await axios.post(api,formData)
     return response.data
   } catch (error) {
     console.error('Login failed:', error)
