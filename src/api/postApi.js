@@ -2,31 +2,41 @@ import axios from '../utils/axiosConfig'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
-
 export const addPost = async (formData) => {
-  const api = `${BASE_URL}${import.meta.env.VITE_API_ADD_POST}`
+  const api = `${BASE_URL}/post/add`
   try {
-    const response = await axios.post(api,formData)
+    const response = await axios.post(api, formData)
     return response.data
   } catch (error) {
-    console.error('Login failed:', error)
+    console.error('Add post failed:', error)
     throw error
   }
 }
 
 export const fetchPosts = async (page) => {
-  return axios.get(`/post/self?page=${page}&limit=10`)
+  const api = `${BASE_URL}/post/self?page=${page}&limit=10`
+  try {
+    const response = await axios.get(api)
+    return response.data
+  } catch (error) {
+    throw error
+  }
 }
 
 export const fetchAllPosts = async (page) => {
-  return axios.get(`/post/all?page=${page}&limit=10`)
+  const api = `${BASE_URL}/post/all?page=${page}&limit=10`
+  try {
+    const response = await axios.get(api)
+    return response.data
+  } catch (error) {
+    throw error
+  }
 }
 
 export const onLikePost = async (postId) => {
-  console.log(postId, " post id on onLike post function")
+  const api = `${BASE_URL}/post/${postId}/like`
   try {
-    const res = await axios.patch(`/post/${postId}/like`)
-    console.log(res, ' response of like function')
+    const res = await axios.patch(api)
     return res.data
   } catch (error) {
     console.error('Error liking post:', error.response?.data || error.message)
@@ -35,12 +45,10 @@ export const onLikePost = async (postId) => {
 }
 
 export const addCommentToPost = async (postId, commentText) => {
+  const api = `${BASE_URL}/post/${postId}/comment`
   try {
-    const res = await axiosInstance.post(`/post/${postId}/comment`, {
-      text: commentText,
-    })
-    console.log(res, ' response of comments function')
-    return res.data // contains success, message, comment, commentsCount
+    const res = await axios.post(api, { text: commentText })
+    return res.data
   } catch (error) {
     console.error(
       'Error adding comment:',

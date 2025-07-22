@@ -1,28 +1,21 @@
 import axios from '../utils/axiosConfig'
-import Cookies from 'js-cookie'
- 
+
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
-
 export const userLogin = async (email, password) => {
-  const api = `${BASE_URL}${import.meta.env.VITE_API_USER_LOGIN}`
+  const api = `${BASE_URL}/auth/login`
   try {
     const response = await axios.post(api, { email, password })
-    console.log(response, " response on the userLogin api")
     return response.data
   } catch (error) {
-    console.error('Login failed:', error)
     throw error
   }
 }
 
-
 export const userSignup = async (fullName, emailId, password) => {
-  const api = `${BASE_URL}${import.meta.env.VITE_API_USER_REGISTER}`
-
+  const api = `${BASE_URL}/auth/register`
   try {
-    console.log(fullName, emailId, password)
     const response = await axios.post(api, {
       fullName,
       email: emailId,
@@ -30,19 +23,16 @@ export const userSignup = async (fullName, emailId, password) => {
     })
     return response.data
   } catch (error) {
-    console.error('Signup failed:', error)
     throw error
   }
 }
 
-
 export const signInWithGoogle = async (code) => {
-  const api = `${BASE_URL}${import.meta.env.VITE_API_USER_GOOGLE_LOGIN}`
+  const api = `${BASE_URL}/auth/google`
   try {
     const response = await axios.post(api, { code })
     return response.data
   } catch (error) {
-    console.error('Google sign-in failed:', error)
     throw error
   }
 }
@@ -57,13 +47,11 @@ export const isAuthenticated = async () => {
 }
 
 export const userLogout = async () => {
-  const api = `${BASE_URL}${import.meta.env.VITE_API_LOGOUT}`
+  const api = `${BASE_URL}/auth/logout`
   try {
     const response = await axios.get(api)
     return response.data
   } catch (error) {
-    console.error('Logout failed:', error)
     throw error
   }
 }
-
