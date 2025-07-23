@@ -14,8 +14,8 @@ const Feed = () => {
       setLoading(true)
       const res = await fetchAllPosts(page)
   
-      if(res.data.success){
-          const newData = res?.data?.data
+      if(res.success){
+          const newData = res?.data
             setPosts((prev) => [...prev, ...newData])
             setLoading(false)
        }  

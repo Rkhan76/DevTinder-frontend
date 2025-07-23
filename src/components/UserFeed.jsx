@@ -13,8 +13,8 @@ const UserFeed = () => {
       setLoading(true)
       const res = await fetchPosts(page)
   
-      if(res.data.success){
-          const newData = res?.data?.data
+      if(res.success){
+          const newData = res?.data
             console.log(newData, " data i need")
             setPosts((prev) => [...prev, ...newData])
             setLoading(false)

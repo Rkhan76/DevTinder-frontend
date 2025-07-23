@@ -17,6 +17,7 @@ export const fetchPosts = async (page) => {
   const api = `${BASE_URL}/post/self?page=${page}&limit=10`
   try {
     const response = await axios.get(api)
+    console.log(response.data, " response data")
     return response.data
   } catch (error) {
     throw error
@@ -27,6 +28,7 @@ export const fetchAllPosts = async (page) => {
   const api = `${BASE_URL}/post/all?page=${page}&limit=10`
   try {
     const response = await axios.get(api)
+    console.log(response.data, " response data")
     return response.data
   } catch (error) {
     throw error

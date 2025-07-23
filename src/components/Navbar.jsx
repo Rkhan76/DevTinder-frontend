@@ -1,5 +1,4 @@
 import { Link, useNavigate } from 'react-router-dom'
-import Cookies from 'js-cookie'
 import { useRef, useState, useEffect } from 'react'
 import { useTheme } from '../ThemeContext'
 import { IoIosNotificationsOutline } from 'react-icons/io'
@@ -20,6 +19,7 @@ const Navbar = () => {
   const { theme, toggleTheme } = useTheme()
   const user = useSelector((state) => state.auth.user)
   const dispatch = useDispatch()
+  
 
   
 
@@ -85,12 +85,12 @@ const Navbar = () => {
             </button>
           </li>
           <li>
-            <button
+            <Link to={`/chat`}
               className="btn btn-circle btn-ghost text-2xl tooltip tooltip-bottom"
               data-tip="Messages"
             >
               <FiMessageSquare />
-            </button>
+            </Link>
           </li>
         </ul>
       </div>
