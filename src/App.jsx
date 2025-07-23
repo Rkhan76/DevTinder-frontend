@@ -9,6 +9,7 @@ import Signup from './components/Signup'
 import { ThemeProvider } from './ThemeContext'
 import Home from './components/Home'
 import ChatApp from './components/ChatApp'
+import NotFound from './components/NotFound'
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             />
             <Route path="/chat" element={<ProtectedRoute><ChatApp /></ProtectedRoute>} />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-center" reverseOrder={false} />
