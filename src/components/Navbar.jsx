@@ -11,6 +11,9 @@ import { useSelector } from 'react-redux'
 import { getAvatarColor, getInitials } from '../utils/userAvtar'
 import { useDispatch } from 'react-redux'
 import { logoutUser } from '../redux/slices/authSlice'
+import { searchUsers } from '../api/authApi'
+import { searchPosts } from '../api/postApi'
+import SearchDropdown from './SearchDropdown'
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -19,38 +22,22 @@ const Navbar = () => {
   const { theme, toggleTheme } = useTheme()
   const user = useSelector((state) => state.auth.user)
   const dispatch = useDispatch()
-  
 
-  
-
- const handleLogout = async () => {
-   try {
-     const res = await userLogout()
-     if (res.success) {
-      dispatch(logoutUser())
-       toast.success('Logged out successfully')
-       navigate('/login')
-     } else {
-       toast.error(res.message || 'Logout failed')
-     }
-   } catch (error) {
-     toast.error('Something went wrong during logout')
-     console.error('Logout error:', error)
-   }
- }
-
-  // Close dropdown when clicking outside
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-  //       setIsOpen(false)
-  //     }
-  //   }
-  //   document.addEventListener('mousedown', handleClickOutside)
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleClickOutside)
-  //   }
-  // }, [])
+  const handleLogout = async () => {
+    try {
+      const res = await userLogout()
+      if (res.success) {
+        dispatch(logoutUser())
+        toast.success('Logged out successfully')
+        navigate('/login')
+      } else {
+        toast.error(res.message || 'Logout failed')
+      }
+    } catch (error) {
+      toast.error('Something went wrong during logout')
+      console.error('Logout error:', error)
+    }
+  }
 
   // Close dropdown when clicking any item inside
   const handleDropdownClick = () => {
@@ -85,7 +72,8 @@ const Navbar = () => {
             </button>
           </li>
           <li>
-            <Link to={`/chat`}
+            <Link
+              to={`/chat`}
               className="btn btn-circle btn-ghost text-2xl tooltip tooltip-bottom"
               data-tip="Messages"
             >
@@ -95,11 +83,7 @@ const Navbar = () => {
         </ul>
       </div>
       <div className="flex items-center gap-3">
-        <input
-          type="text"
-          placeholder="Search"
-          className="input input-bordered w-32 md:w-56 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        />
+        <SearchDropdown navigate={navigate} />
         <div
           className={`dropdown dropdown-end mx-1 ${
             isOpen ? 'dropdown-open' : ''
@@ -114,10 +98,7 @@ const Navbar = () => {
           >
             {user?.image ? (
               <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
-                <img
-                  alt="User avatar"
-                  src={user?.image}
-                />
+                <img alt="User avatar" src={user?.image} />
               </div>
             ) : (
               <div

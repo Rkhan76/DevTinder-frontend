@@ -17,7 +17,7 @@ export const fetchPosts = async (page) => {
   const api = `${BASE_URL}/post/self?page=${page}&limit=10`
   try {
     const response = await axios.get(api)
-    console.log(response.data, " response data")
+    console.log(response.data, ' response data')
     return response.data
   } catch (error) {
     throw error
@@ -28,7 +28,7 @@ export const fetchAllPosts = async (page) => {
   const api = `${BASE_URL}/post/all?page=${page}&limit=10`
   try {
     const response = await axios.get(api)
-    console.log(response.data, " response data")
+    console.log(response.data, ' response data')
     return response.data
   } catch (error) {
     throw error
@@ -58,4 +58,11 @@ export const addCommentToPost = async (postId, commentText) => {
     )
     throw error
   }
+}
+
+// Search posts by query
+export const searchPosts = async (query) => {
+  const api = `${BASE_URL}/post/search?query=${encodeURIComponent(query)}`
+  const response = await axios.get(api)
+  return response.data
 }

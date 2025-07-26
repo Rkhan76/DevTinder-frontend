@@ -10,6 +10,7 @@ import { ThemeProvider } from './ThemeContext'
 import Home from './components/Home'
 import ChatApp from './components/ChatApp'
 import NotFound from './components/NotFound'
+import SearchResults from './components/SearchResults'
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          
+
           <Route path="/" element={<Body />}>
             <Route index element={<RedirectBasedOnAuth />} />
 
@@ -26,7 +27,7 @@ function App() {
               path="/home"
               element={
                 <ProtectedRoute>
-                  <Home/>
+                  <Home />
                 </ProtectedRoute>
               }
             />
@@ -38,7 +39,22 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/chat" element={<ProtectedRoute><ChatApp /></ProtectedRoute>} />
+            <Route
+              path="/chat"
+              element={
+                <ProtectedRoute>
+                  <ChatApp />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <ProtectedRoute>
+                  <SearchResults />
+                </ProtectedRoute>
+              }
+            />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

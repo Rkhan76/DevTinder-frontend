@@ -1,6 +1,5 @@
 import axios from '../utils/axiosConfig'
 
-
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const userLogin = async (email, password) => {
@@ -58,7 +57,17 @@ export const userLogout = async () => {
 
 // Fetch all users (for chat sidebar)
 export const fetchAllUsers = async () => {
-  const api = `${BASE_URL}/user/all`;
-  const response = await axios.get(api);
-  return response.data;
-};
+  const api = `${BASE_URL}/user/all`
+  const response = await axios.get(api)
+  return response.data
+}
+
+// Search users by query
+export const searchUsers = async (query) => {
+  console.log(query, "query on the search user api")
+  const api = `${BASE_URL}/user/search?query=${encodeURIComponent(query)}`
+  const response = await axios.get(api)
+
+  console.log(response)
+  return response.data
+}
