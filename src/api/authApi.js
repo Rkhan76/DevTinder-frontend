@@ -55,3 +55,10 @@ export const userLogout = async () => {
     throw error
   }
 }
+
+// Fetch all users (for chat sidebar)
+export const fetchAllUsers = async () => {
+  const api = `${BASE_URL}/user/all`;
+  const response = await axios.get(api);
+  return response.data;
+};

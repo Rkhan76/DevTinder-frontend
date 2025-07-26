@@ -1,48 +1,120 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useSelector } from 'react-redux';
 import Sidebar from "./Sidebar";
 import ChatWindow from "./ChatWindow";
 import UserDetails from "./UserDetails";
+import { fetchChatHistory } from '../api/chatApi';
+import { createSocket } from '../utils/socket';
+import { fetchAllUsers } from '../api/authApi';
 
-const users = [
-  { id: 1, name: "Dan Walker", avatar: "/avatars/dan.png", online: true, role: "IOS Developer" },
-  { id: 2, name: "Jenna", avatar: "/avatars/jenna.png", online: true, role: "Designer" },
-  // ...more users
-];
-
-const initialMessages = [
-  { id: 1, senderId: 1, text: "Hi Jenna! I made a new design, and I wanted to show it to you.", time: "8:03am" },
-  { id: 2, senderId: 1, text: "It's quite clean and it's inspired from Bulkit.", time: "8:03am" },
-  { id: 3, senderId: 1, text: "FYI it was done in less than a day.", time: "8:13am" },
-  { id: 4, senderId: 2, text: "Oh really??! I want to see that.", time: "8:12am" },
-  { id: 5, senderId: 2, text: "Great to hear it. Just send me the PSD files so I can have a look at it.", time: "8:17am" },
-  { id: 6, senderId: 2, text: "And if you have a prototype, you can also send me the link to it.", time: "8:18am" },
-];
 
 export default function ChatApp() {
-  const [selectedUser, setSelectedUser] = useState(users[0]);
-  const [messages, setMessages] = useState(initialMessages);
+  const currentUser = useSelector((state) => state.auth.user);
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [typing, setTyping] = useState(false);
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+  const socketRef = useRef(null);
+  const typingTimeout = useRef(null);
 
+  // Fetch users on mount
+  useEffect(() => {
+    if (!currentUser) return;
+    fetchAllUsers().then((data) => {
+      // Exclude current user from list
+      const filtered = (data.users || []).filter(u => u.id !== currentUser._id);
+      setUsers(filtered);
+      setSelectedUser(filtered[0] || null);
+    });
+  }, [currentUser]);
+
+  // Connect socket and join room
+  useEffect(() => {
+    if (!currentUser) return;
+    socketRef.current = createSocket(currentUser.token);
+    socketRef.current.emit('join', currentUser._id);
+
+    // console.log(socketRef.current, "socketRef.current");
+    console.log(currentUser._id, "current user id");
+
+    socketRef.current.on('receive_message', (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+    socketRef.current.on('typing', ({ sender }) => {
+      if (selectedUser && sender === selectedUser.id) setIsOtherTyping(true);
+    });
+    socketRef.current.on('stop_typing', ({ sender }) => {
+      if (selectedUser && sender === selectedUser.id) setIsOtherTyping(false);
+    });
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [currentUser, selectedUser]);
+
+  // Fetch chat history when selected user changes
+  useEffect(() => {
+    if (!currentUser || !selectedUser) return;
+    fetchChatHistory(selectedUser._id).then((data) => {
+      
+      setMessages(data || []);
+    });
+  }, [selectedUser, currentUser]);
+
+  // Send message
   const handleSendMessage = (text) => {
-    setMessages([
-      ...messages,
-      {
-        id: messages.length + 1,
-        senderId: 1, // Assume current user is Dan Walker (id: 1)
-        text,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      },
-    ]);
+    if (!text.trim() || !currentUser || !selectedUser) return;
+
+    console.log(currentUser._id, "current user");
+    console.log(selectedUser._id, "selected user");
+    console.log(text, "text");
+    console.log("i am in the handlemSendMessage function ddjfkdjf")
+    const msg = {
+      sender: currentUser._id,
+      receiver: selectedUser._id,
+      message: text,
+    };
+
+    console.log(msg, "msg");
+    socketRef.current.emit('send_message', msg);
+    setMessages((prev) => [...prev, { ...msg, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
+    console.log(messages, "messages after sending message");
+    handleStopTyping();
   };
+
+  // Typing indicator logic
+  const handleTyping = () => {
+    if (!typing) {
+      setTyping(true);
+      socketRef.current.emit('typing', { sender: currentUser._id, receiver: selectedUser._id });
+    }
+    clearTimeout(typingTimeout.current);
+    typingTimeout.current = setTimeout(() => {
+      handleStopTyping();
+    }, 1200);
+  };
+  const handleStopTyping = () => {
+    if (typing) {
+      setTyping(false);
+      socketRef.current.emit('stop_typing', { sender: currentUser._id, receiver: selectedUser.id });
+    }
+  };
+
+  if (!selectedUser) {
+    return <div className="flex h-screen items-center justify-center w-full text-xl text-gray-500">No other users found to chat with.</div>;
+  }
 
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar users={users} selectedUser={selectedUser} onSelectUser={setSelectedUser} />
       <ChatWindow
         messages={messages}
-        currentUser={users[0]}
+        currentUser={currentUser}
         selectedUser={selectedUser}
         onSendMessage={handleSendMessage}
         users={users}
+        onTyping={handleTyping}
+        isOtherTyping={isOtherTyping}
       />
       <UserDetails user={selectedUser} />
     </div>

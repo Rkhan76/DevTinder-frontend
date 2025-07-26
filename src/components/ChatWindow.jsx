@@ -2,7 +2,7 @@ import React from "react";
 import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
 
-export default function ChatWindow({ messages, currentUser, selectedUser, onSendMessage, users }) {
+export default function ChatWindow({ messages, currentUser, selectedUser, onSendMessage, users, onTyping, isOtherTyping }) {
   return (
     <div className="flex flex-col flex-1">
       <div className="flex items-center px-6 py-4 bg-white border-b">
@@ -13,7 +13,10 @@ export default function ChatWindow({ messages, currentUser, selectedUser, onSend
         </div>
       </div>
       <MessageList messages={messages} users={users} currentUser={currentUser} />
-      <MessageInput onSend={onSendMessage} />
+      {isOtherTyping && (
+        <div className="px-6 py-2 text-sm text-gray-500 animate-pulse">{selectedUser.name} is typing...</div>
+      )}
+      <MessageInput onSend={onSendMessage} onTyping={onTyping} />
     </div>
   );
 } 
