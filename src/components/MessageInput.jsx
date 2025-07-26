@@ -3,7 +3,6 @@ import React, { useState } from "react";
 export default function MessageInput({ onSend, onTyping }) {
   const [text, setText] = useState("");
   const handleSend = () => {
-    console.log(text, "text");
     if (text.trim()) {
       onSend(text);
       setText("");

@@ -1,9 +1,25 @@
 import React from "react";
+import { getAvatarColor, getInitials } from "../utils/userAvtar";
 
 export default function UserDetails({ user }) {
+
+  console.log(user, "user on user details component")
   return (
     <div className="w-80 bg-white border-l flex flex-col items-center py-8 px-4">
-      <img src={user.avatar} alt={user.name} className="w-24 h-24 rounded-full mb-4" />
+      <button>
+        {user?.image ? (
+          <img src={user.image} alt={user.fullName} className="w-24 h-24 rounded-full mb-4" />
+        ) : (
+          <div
+            className={`w-24 h-24 rounded-full ${getAvatarColor(
+              user.fullName
+            )} flex items-center justify-center`}
+          >
+            <p>{getInitials(user.fullName)}</p>
+          </div>
+        )}
+      </button>
+      {/* <img src={user.avatar} alt={user.name} className="w-24 h-24 rounded-full mb-4" /> */}
       <h2 className="text-xl font-bold">{user.name}</h2>
       <div className="text-gray-500 mb-4">{user.role}</div>
       <div className="flex space-x-2 mb-4">
@@ -25,5 +41,5 @@ export default function UserDetails({ user }) {
         </div>
       </div>
     </div>
-  );
+  )
 } 

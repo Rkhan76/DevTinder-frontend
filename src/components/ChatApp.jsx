@@ -17,6 +17,7 @@ export default function ChatApp() {
   const [isOtherTyping, setIsOtherTyping] = useState(false);
   const socketRef = useRef(null);
   const typingTimeout = useRef(null);
+    const [onlineUsers, setOnlineUsers] = useState([])
 
   // Fetch users on mount
   useEffect(() => {
@@ -31,25 +32,30 @@ export default function ChatApp() {
 
   // Connect socket and join room
   useEffect(() => {
-    if (!currentUser) return;
-    socketRef.current = createSocket(currentUser.token);
-    socketRef.current.emit('join', currentUser._id);
+    if (!currentUser) return
+    socketRef.current = createSocket(currentUser.token)
+    socketRef.current.emit('join', currentUser._id)
 
-    // console.log(socketRef.current, "socketRef.current");
-    console.log(currentUser._id, "current user id");
+    socketRef.current.emit('join', currentUser._id)
+
+
+    // ✅ Listen for online users list
+    socketRef.current.on('online_users', (userIds) => {
+      setOnlineUsers(userIds)
+    })
 
     socketRef.current.on('receive_message', (msg) => {
-      setMessages((prev) => [...prev, msg]);
-    });
+      setMessages((prev) => [...prev, msg])
+    })
     socketRef.current.on('typing', ({ sender }) => {
-      if (selectedUser && sender === selectedUser.id) setIsOtherTyping(true);
-    });
+      if (selectedUser && sender === selectedUser.id) setIsOtherTyping(true)
+    })
     socketRef.current.on('stop_typing', ({ sender }) => {
-      if (selectedUser && sender === selectedUser.id) setIsOtherTyping(false);
-    });
+      if (selectedUser && sender === selectedUser.id) setIsOtherTyping(false)
+    })
     return () => {
-      socketRef.current.disconnect();
-    };
+      socketRef.current.disconnect()
+    }
   }, [currentUser, selectedUser]);
 
   // Fetch chat history when selected user changes
@@ -65,20 +71,14 @@ export default function ChatApp() {
   const handleSendMessage = (text) => {
     if (!text.trim() || !currentUser || !selectedUser) return;
 
-    console.log(currentUser._id, "current user");
-    console.log(selectedUser._id, "selected user");
-    console.log(text, "text");
-    console.log("i am in the handlemSendMessage function ddjfkdjf")
     const msg = {
       sender: currentUser._id,
       receiver: selectedUser._id,
       message: text,
     };
 
-    console.log(msg, "msg");
     socketRef.current.emit('send_message', msg);
     setMessages((prev) => [...prev, { ...msg, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
-    console.log(messages, "messages after sending message");
     handleStopTyping();
   };
 
@@ -106,8 +106,14 @@ export default function ChatApp() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <Sidebar users={users} selectedUser={selectedUser} onSelectUser={setSelectedUser} />
+      <Sidebar
+        users={users}
+        onlineUsers={onlineUsers}
+        selectedUser={selectedUser}
+        onSelectUser={setSelectedUser}
+      />
       <ChatWindow
+        onlineUsers={onlineUsers}
         messages={messages}
         currentUser={currentUser}
         selectedUser={selectedUser}
@@ -118,5 +124,5 @@ export default function ChatApp() {
       />
       <UserDetails user={selectedUser} />
     </div>
-  );
+  )
 } 

@@ -17,10 +17,9 @@ const LoginWithGoogle = () => {
     onSuccess: async (tokenResponse) => {
       try {
         const res = await signInWithGoogle(tokenResponse.code)
-        console.log(res, 'response in signInWithGoogle')
+
 
         if (res.success) {
-          console.log("hey i am succesfull")
            dispatch(setUser(res?.user))
           toast.success('Successfully Logged In')
           navigate('/home')
