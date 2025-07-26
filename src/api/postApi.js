@@ -13,11 +13,10 @@ export const addPost = async (formData) => {
   }
 }
 
-export const fetchPosts = async (page) => {
-  const api = `${BASE_URL}/post/self?page=${page}&limit=10`
+export const fetchUserPosts = async (userId, page = 1) => {
+  const api = `${BASE_URL}/post/user/${userId}?page=${page}&limit=10`
   try {
     const response = await axios.get(api)
-    console.log(response.data, ' response data')
     return response.data
   } catch (error) {
     throw error

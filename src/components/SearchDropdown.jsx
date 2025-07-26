@@ -63,7 +63,7 @@ const SearchDropdown = ({ navigate }) => {
   }
 
   const handleUserClick = (user) => {
-    navigate(`/search?q=${encodeURIComponent(user.fullName)}`)
+    navigate(`/profile/${user._id}`)
     setShowDropdown(false)
     setSearchTerm(user.fullName)
   }

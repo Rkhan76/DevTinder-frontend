@@ -1,39 +1,41 @@
-import { useEffect, useState } from "react"
-import { fetchPosts } from "../api/postApi"
-import { FromScratch } from "./FromScratch"
+import { useEffect, useState } from 'react'
+import { fetchUserPosts } from '../api/postApi'
+import { FromScratch } from './FromScratch'
 
-
-const UserFeed = () => {
+const UserFeed = ({ userId }) => {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  
-  const fetchData = async(page)=>{
-     try {
+
+  const fetchData = async (page) => {
+    try {
       setLoading(true)
-      const res = await fetchPosts(page)
-  
-      if(res.success){
-          const newData = res?.data
-            console.log(newData, " data i need")
-            setPosts((prev) => [...prev, ...newData])
-            setLoading(false)
-       }  
+      const res = await fetchUserPosts(userId, page)
+
+    
+
+
+      if (res.success) {
+        const newData = res?.data
+        console.log(newData, ' data i need')
+        setPosts((prev) => [...prev, ...newData])
+        setLoading(false)
+      }
     } catch (err) {
       setError(err)
       setLoading(false)
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
+    setPosts([]) // Reset posts when userId changes
     fetchData(1)
-  },[])
-
+  }, [userId])
 
   return (
     <div className="w-full  flex flex-col gap-6">
       <FromScratch
-        posts = {posts}
+        posts={posts}
         fetchData={fetchData}
         loading={loading}
         error={error}
