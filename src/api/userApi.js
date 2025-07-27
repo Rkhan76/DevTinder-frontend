@@ -24,22 +24,55 @@ export const fetchUserPosts = async (userId, page = 1) => {
   }
 }
 
-// Add friend
-export const addFriend = async (friendId) => {
-  const api = `${BASE_URL}/user/add-friend`
+// Send friend request
+export const sendFriendRequest = async (userId) => {
+  const api = `${BASE_URL}/user/add-friend/${userId}`
   try {
-    const response = await axios.post(api, { friendId })
+    const response = await axios.post(api)
     return response.data
   } catch (error) {
     throw error
   }
 }
 
-// Remove friend
-export const removeFriend = async (friendId) => {
-  const api = `${BASE_URL}/user/remove-friend`
+// Accept friend request
+export const acceptFriendRequest = async (userId) => {
+  const api = `${BASE_URL}/user/accept-friend-request/${userId}`
   try {
-    const response = await axios.delete(api, { data: { friendId } })
+    const response = await axios.post(api)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+// Reject friend request
+export const rejectFriendRequest = async (userId) => {
+  const api = `${BASE_URL}/user/reject-friend-request/${userId}`
+  try {
+    const response = await axios.post(api)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+// Cancel sent friend request
+export const cancelFriendRequest = async (userId) => {
+  const api = `${BASE_URL}/user/cancel-friend-request/${userId}`
+  try {
+    const response = await axios.post(api)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+// Get friend requests
+export const getFriendRequests = async () => {
+  const api = `${BASE_URL}/user/friend-requests`
+  try {
+    const response = await axios.get(api)
     return response.data
   } catch (error) {
     throw error

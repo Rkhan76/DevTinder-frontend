@@ -42,11 +42,11 @@ const PostCard = ({ post }) => {
   }
 
   const handleShare = () => {
-    console.log('Post shared')
+    // Share functionality can be implemented here
   }
 
   const handleComment = () => {
-    console.log('Comment button clicked')
+    // Comment functionality can be implemented here
   }
 
   // const avatarColor = getAvatarColor(fullName)

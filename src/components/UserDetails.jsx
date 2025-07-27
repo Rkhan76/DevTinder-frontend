@@ -2,8 +2,6 @@ import React from "react";
 import { getAvatarColor, getInitials } from "../utils/userAvtar";
 
 export default function UserDetails({ user }) {
-
-  console.log(user, "user on user details component")
   return (
     <div className="w-80 bg-white border-l flex flex-col items-center py-8 px-4">
       <button>

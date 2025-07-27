@@ -64,10 +64,7 @@ export const fetchAllUsers = async () => {
 
 // Search users by query
 export const searchUsers = async (query) => {
-  console.log(query, "query on the search user api")
   const api = `${BASE_URL}/user/search?query=${encodeURIComponent(query)}`
   const response = await axios.get(api)
-
-  console.log(response)
   return response.data
 }

@@ -49,7 +49,6 @@ const CreatePost = () => {
      const res = await addPost(formData)
      if (res.success) {
        toast.success('Post created successfully')
-       console.log(res.post)
        handleCloseModal()
      } else {
        toast.error(res.message || 'Failed to create post')

@@ -10,7 +10,6 @@ export const handledecodeToken = (token)=>{
     const decodedToken = jwtDecode(token)
     return decodedToken
     }catch(err){
-        console.log(err)
         toast.error("Something went wrong")
     }
 }

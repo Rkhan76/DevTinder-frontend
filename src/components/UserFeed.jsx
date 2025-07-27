@@ -12,12 +12,8 @@ const UserFeed = ({ userId }) => {
       setLoading(true)
       const res = await fetchUserPosts(userId, page)
 
-    
-
-
       if (res.success) {
         const newData = res?.data
-        console.log(newData, ' data i need')
         setPosts((prev) => [...prev, ...newData])
         setLoading(false)
       }

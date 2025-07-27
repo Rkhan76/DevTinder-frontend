@@ -6,7 +6,13 @@ import BasicInfo from './BasicInfo'
 import ProfileButton from './ProfileButton'
 import UserFeed from './UserFeed'
 import { getAvatarColor, getInitials } from '../utils/userAvtar'
-import { getUserById, addFriend, removeFriend } from '../api/userApi'
+import {
+  getUserById,
+  sendFriendRequest,
+  acceptFriendRequest,
+  rejectFriendRequest,
+  cancelFriendRequest,
+} from '../api/userApi'
 import { setUser } from '../redux/slices/authSlice'
 import toast from 'react-hot-toast'
 
@@ -17,73 +23,132 @@ const Profile = () => {
   const [userDetails, setUserDetails] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('timeline')
-  const [isFriend, setIsFriend] = useState(false)
-  const [addingFriend, setAddingFriend] = useState(false)
-  const [removingFriend, setRemovingFriend] = useState(false)
+  const [friendStatus, setFriendStatus] = useState('none') // 'none', 'friends', 'sent', 'received'
+  const [friendActionLoading, setFriendActionLoading] = useState(false)
 
-  const handleAddFriend = async () => {
-    if (!userId || addingFriend) return
+  const handleSendFriendRequest = async () => {
+    if (!userId || friendActionLoading) return
 
     try {
-      setAddingFriend(true)
-      const response = await addFriend(userId)
-      console.log(response, ' response on the add friend')
+      setFriendActionLoading(true)
+      const response = await sendFriendRequest(userId)
 
       if (response.success) {
-        // Update current user data with new connection
+        // Update current user data with sent request
         const updatedCurrentUser = {
           ...currentUser,
-          connections: [...(currentUser.connections || []), userDetails._id],
-          friends: [...(currentUser.friends || []), userDetails._id],
+          sentFriendRequests: [
+            ...(currentUser.sentFriendRequests || []),
+            userDetails._id,
+          ],
         }
         dispatch(setUser(updatedCurrentUser))
-        setIsFriend(true)
-        toast.success('Friend added successfully!')
+        setFriendStatus('sent')
+        toast.success('Friend request sent!')
       }
     } catch (error) {
-      console.error('Error adding friend:', error)
-      toast.error('Failed to add friend')
+      console.error('Error sending friend request:', error)
+      toast.error('Failed to send friend request')
     } finally {
-      setAddingFriend(false)
+      setFriendActionLoading(false)
     }
   }
 
-  const handleRemoveFriend = async () => {
-    if (!userId || removingFriend) return
+  const handleAcceptFriendRequest = async () => {
+    if (!userId || friendActionLoading) return
 
     try {
-      setRemovingFriend(true)
-      const response = await removeFriend(userId)
-      console.log(response, ' response on the remove friend')
+      setFriendActionLoading(true)
+      const response = await acceptFriendRequest(userId)
 
       if (response.success) {
-        // Update current user data by removing the connection
+        // Update current user data
         const updatedCurrentUser = {
           ...currentUser,
-          connections: (currentUser.connections || []).filter(
-            (id) => id !== userDetails._id
-          ),
-          friends: (currentUser.friends || []).filter(
+          connections: [...(currentUser.connections || []), userDetails._id],
+          receivedFriendRequests: (
+            currentUser.receivedFriendRequests || []
+          ).filter((id) => id !== userDetails._id),
+        }
+        dispatch(setUser(updatedCurrentUser))
+        setFriendStatus('friends')
+        toast.success('Friend request accepted!')
+      }
+    } catch (error) {
+      console.error('Error accepting friend request:', error)
+      toast.error('Failed to accept friend request')
+    } finally {
+      setFriendActionLoading(false)
+    }
+  }
+
+  const handleRejectFriendRequest = async () => {
+    if (!userId || friendActionLoading) return
+
+    try {
+      setFriendActionLoading(true)
+      const response = await rejectFriendRequest(userId)
+
+      if (response.success) {
+        // Update current user data
+        const updatedCurrentUser = {
+          ...currentUser,
+          receivedFriendRequests: (
+            currentUser.receivedFriendRequests || []
+          ).filter((id) => id !== userDetails._id),
+        }
+        dispatch(setUser(updatedCurrentUser))
+        setFriendStatus('none')
+        toast.success('Friend request rejected')
+      }
+    } catch (error) {
+      console.error('Error rejecting friend request:', error)
+      toast.error('Failed to reject friend request')
+    } finally {
+      setFriendActionLoading(false)
+    }
+  }
+
+  const handleCancelFriendRequest = async () => {
+    if (!userId || friendActionLoading) return
+
+    try {
+      setFriendActionLoading(true)
+      const response = await cancelFriendRequest(userId)
+
+      if (response.success) {
+        // Update current user data
+        const updatedCurrentUser = {
+          ...currentUser,
+          sentFriendRequests: (currentUser.sentFriendRequests || []).filter(
             (id) => id !== userDetails._id
           ),
         }
         dispatch(setUser(updatedCurrentUser))
-        setIsFriend(false)
-        toast.success('Friend removed successfully!')
+        setFriendStatus('none')
+        toast.success('Friend request cancelled')
       }
     } catch (error) {
-      console.error('Error removing friend:', error)
-      toast.error('Failed to remove friend')
+      console.error('Error cancelling friend request:', error)
+      toast.error('Failed to cancel friend request')
     } finally {
-      setRemovingFriend(false)
+      setFriendActionLoading(false)
     }
   }
 
   const handleFriendAction = () => {
-    if (isFriend) {
-      handleRemoveFriend()
-    } else {
-      handleAddFriend()
+    switch (friendStatus) {
+      case 'none':
+        handleSendFriendRequest()
+        break
+      case 'received':
+        handleAcceptFriendRequest()
+        break
+      case 'sent':
+        handleCancelFriendRequest()
+        break
+      default:
+        break
     }
   }
 
@@ -95,11 +160,9 @@ const Profile = () => {
         if (userId) {
           // Fetching other user's profile
           const response = await getUserById(userId)
-          console.log(response, ' response on the profile')
           setUserDetails(response.user)
         } else {
           // Using current user's data from Redux
-          console.log(currentUser, ' current user on the profile')
           setUserDetails(currentUser)
         }
       } catch (error) {
@@ -124,13 +187,26 @@ const Profile = () => {
     fetchUserDetails()
   }, [userId, currentUser])
 
-  // Check if current user is already friends with the profile user
+  // Check friend status between current user and profile user
   useEffect(() => {
-    console.log(currentUser?._id, userId, 'current user and userId')
-    if (currentUser && userId) {
-      console.log('inside the use effect of the profile kljdfkjdsflk')
-      const isAlreadyFriend = currentUser.connections?.includes(userDetails._id)
-      setIsFriend(isAlreadyFriend)
+    if (currentUser && userId && userDetails) {
+      const isFriend = currentUser?.connections?.includes(userDetails._id)
+      const hasSentRequest = currentUser?.sentFriendRequests?.includes(
+        userDetails._id
+      )
+      const hasReceivedRequest = currentUser?.receivedFriendRequests?.includes(
+        userDetails._id
+      )
+
+      if (isFriend) {
+        setFriendStatus('friends')
+      } else if (hasSentRequest) {
+        setFriendStatus('sent')
+      } else if (hasReceivedRequest) {
+        setFriendStatus('received')
+      } else {
+        setFriendStatus('none')
+      }
     }
   }, [currentUser, userDetails, userId])
 
@@ -141,8 +217,6 @@ const Profile = () => {
       </div>
     )
   }
-
-  console.log(isFriend, ' is already friend')
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -156,7 +230,7 @@ const Profile = () => {
           />
 
           {/* Edit Cover Button */}
-          {currentUser._id === userDetails._id && (
+          {currentUser?._id === userDetails?._id && (
             <button className="absolute top-4 left-4 bg-white/90 hover:bg-white text-gray-700 px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors">
               <svg
                 className="w-4 h-4"
@@ -205,33 +279,85 @@ const Profile = () => {
             )}
 
             {/* Overlay Icons */}
-            {currentUser._id !== userDetails._id && (
-              <div className="absolute -bottom-0 -right-1">
+            {currentUser?._id !== userDetails?._id && (
+              <div className="absolute -bottom-0 -right-1 flex gap-1">
+                {friendStatus === 'received' && (
+                  <button
+                    onClick={handleRejectFriendRequest}
+                    disabled={friendActionLoading}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg transition-colors bg-red-500 hover:bg-red-600 ${
+                      friendActionLoading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                )}
                 <button
                   onClick={handleFriendAction}
-                  disabled={addingFriend || removingFriend}
+                  disabled={friendActionLoading || friendStatus === 'friends'}
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg transition-colors ${
-                    isFriend
-                      ? 'bg-green-500 hover:bg-green-600'
+                    friendStatus === 'friends'
+                      ? 'bg-green-500 cursor-not-allowed'
+                      : friendStatus === 'sent'
+                      ? 'bg-yellow-500 hover:bg-yellow-600'
+                      : friendStatus === 'received'
+                      ? 'bg-blue-500 hover:bg-blue-600'
                       : 'bg-blue-500 hover:bg-blue-600'
                   } ${
-                    addingFriend || removingFriend
+                    friendActionLoading || friendStatus === 'friends'
                       ? 'opacity-50 cursor-not-allowed'
                       : ''
                   }`}
                 >
-                  {addingFriend ? (
+                  {friendActionLoading ? (
                     <div className="loading loading-spinner loading-xs text-white"></div>
-                  ) : removingFriend ? (
-                    <div className="loading loading-spinner loading-xs text-white"></div>
-                  ) : isFriend ? (
-                    
+                  ) : friendStatus === 'friends' ? (
                     <svg
                       className="w-4 h-4"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
                       <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                  ) : friendStatus === 'sent' ? (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  ) : friendStatus === 'received' ? (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                   ) : (
                     <svg
@@ -283,7 +409,6 @@ const Profile = () => {
           {/* Center - User Information */}
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-1">
-              {console.log(userDetails, ' user details on the profile')}
               {userDetails?.fullName || 'User Name'}
             </h1>
             <p className="text-lg text-gray-600 mb-2">
@@ -329,7 +454,7 @@ const Profile = () => {
         {/* Content Area */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           {activeTab === 'timeline' && (
-            <UserFeed userId={userId || currentUser._id} />
+            <UserFeed userId={userId || currentUser?._id} />
           )}
           {activeTab === 'about' && (
             <div className="text-center py-12">
