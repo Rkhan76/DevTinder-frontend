@@ -94,3 +94,28 @@ This project is licensed under the [MIT License](LICENSE).
 1- navbar avtar show user image and if image is not present then show the name letter  =>  // Done
 2- show the image of the user in his post if present or show the letter of the name => Done
 3- Add image to the post and save image to a cloud like cloudinary or firebase => 
+
+<!--Major tasks to do on app-->
+1- Optimize the frontend
+2- Role Based Access
+3- make the ui better
+4- make the ui responsive
+
+<!-- Main parts of application -->
+1- posts
+    => user
+       => add post
+         => fix ui
+         => open the modal if user add the image first
+         => open the modal if user try to write a post
+       => edit post
+       => delete post
+2- chat application
+3- notification
+4- friend request
+5- user profile
+6- role based access
+
+
+<!-- Today work to do -->
+1- add post ui + backend

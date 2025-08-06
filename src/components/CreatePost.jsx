@@ -3,6 +3,8 @@ import { IoMdImages } from 'react-icons/io'
 import { handledecodeToken } from '../utils/userDetailByToken'
 import { addPost } from '../api/postApi'
 import toast from 'react-hot-toast'
+import { useSelector } from 'react-redux'
+import { getAvatarColor, getInitials } from '../utils/userAvtar'
 
 const CreatePost = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -11,6 +13,9 @@ const CreatePost = () => {
   const [creatingPostLoading, setCreatingPostLoading ] = useState(false)
   const [imagePreview, setImagePreview] = useState(null)
   const fileInputRef = useRef(null)
+  const user = useSelector((state) => state.auth.user)
+
+  console.log(user, " user details in current login")
 
   const WORD_LIMIT = 300;
   const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
@@ -29,7 +34,10 @@ const CreatePost = () => {
     if (file) {
       setImage(file)
       setImagePreview(URL.createObjectURL(file))
-    }
+      if(!modalOpen){
+        handleOpenModal()
+      }
+    } 
   }
 
  const handlePost = async () => {
@@ -64,17 +72,28 @@ const CreatePost = () => {
   return (
     <>
       {/* Rounded rectangle clickable area to open modal */}
-      <div className="w-full max-w-xl flex items-center gap-4 mb-6">
+      <div className="w-full max-w-xl flex items-center gap-4 mb-6 bg-white py-6 px-3 rounded-lg border-[2px] border-base-300">
         <div className="avatar">
           <div className="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-            <img
-              src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              alt="User avatar"
-            />
+            {user?.image ? (
+              <div className="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
+                <img alt="User avatar" src={user?.image} />
+              </div>
+            ) : (
+              <div
+                className={`flex items-center justify-center w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden ${getAvatarColor(
+                  user?.fullName
+                )}`}
+              >
+                <p className="flex items-center justify-center leading-none h-full">
+                  {getInitials(user?.fullName)}
+                </p>
+              </div>
+            )}
           </div>
         </div>
         <div
-          className="flex-1 input input-bordered bg-white rounded-full px-6 py-3 text-base-content/70 cursor-pointer hover:bg-base-200 transition text-lg font-normal border border-base-300 shadow"
+          className="flex-1 input input-bordered bg-white rounded-full px-6 py-6 text-base-content/70 cursor-pointer hover:bg-base-200 transition text-lg font-normal border border-base-300 shadow"
           onClick={handleOpenModal}
         >
           Start a post...
@@ -100,9 +119,9 @@ const CreatePost = () => {
       {/* Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-3xl p-12 relative">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-3xl p-12 relative max-h-[90vh] overflow-y-auto">
             <button
-              className="absolute top-2 right-2 btn btn-sm btn-circle btn-ghost"
+              className="absolute top-2 right-2 btn btn-sm btn-circle btn-ghost text-2xl"
               onClick={handleCloseModal}
             >
               &times;
@@ -110,10 +129,21 @@ const CreatePost = () => {
             <div className="flex items-center gap-3 mb-4">
               <div className="avatar">
                 <div className="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img
-                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                    alt="User avatar"
-                  />
+                  {user?.image ? (
+                    <div className="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
+                      <img alt="User avatar" src={user?.image} />
+                    </div>
+                  ) : (
+                    <div
+                      className={`flex items-center justify-center w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden ${getAvatarColor(
+                        user?.fullName
+                      )}`}
+                    >
+                      <p className="flex items-center justify-center leading-none h-full">
+                        {getInitials(user?.fullName)}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="font-semibold">You</div>

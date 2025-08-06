@@ -1,19 +1,17 @@
-
 import { useState } from 'react'
 import { userLogin } from '../api/authApi'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import LoginWithGoogle from './LoginWithGoogle'
-import { useDispatch } from 'react-redux';
-import { setUser } from '../redux/slices/authSlice';
+import { useDispatch } from 'react-redux'
+import { setUser } from '../redux/slices/authSlice'
 
 const Login = () => {
-  const [emailId, setEmailId] = useState('')
-  const [password, setPassword] = useState('')
+  const [emailId, setEmailId] = useState('john@example.com')
+  const [password, setPassword] = useState('Password@123')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
-
 
   const handleLogin = async () => {
     if (!emailId || !password) {
@@ -25,7 +23,7 @@ const Login = () => {
       setLoading(true)
       const res = await userLogin(emailId, password)
       const userData = res.data.user
-     
+
       if (res.success) {
         dispatch(setUser(userData))
         toast.success('Login Successful!')

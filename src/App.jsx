@@ -11,6 +11,7 @@ import Home from './components/Home'
 import ChatApp from './components/ChatApp'
 import NotFound from './components/NotFound'
 import SearchResults from './components/SearchResults'
+import Notifications from './components/Notifications'
 
 function App() {
   return (
@@ -60,6 +61,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <SearchResults />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <Notifications />
                 </ProtectedRoute>
               }
             />
