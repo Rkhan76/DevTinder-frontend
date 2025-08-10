@@ -10,16 +10,16 @@ const CreatePost = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [content, setContent] = useState('')
   const [image, setImage] = useState(null)
-  const [creatingPostLoading, setCreatingPostLoading ] = useState(false)
+  const [creatingPostLoading, setCreatingPostLoading] = useState(false)
   const [imagePreview, setImagePreview] = useState(null)
   const fileInputRef = useRef(null)
   const user = useSelector((state) => state.auth.user)
 
-  console.log(user, " user details in current login")
+  console.log(user, ' user details in current login')
 
-  const WORD_LIMIT = 300;
-  const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
-  const overLimit = wordCount > WORD_LIMIT;
+  const WORD_LIMIT = 300
+  const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0
+  const overLimit = wordCount > WORD_LIMIT
 
   const handleOpenModal = () => setModalOpen(true)
   const handleCloseModal = () => {
@@ -27,6 +27,10 @@ const CreatePost = () => {
     setContent('')
     setImage(null)
     setImagePreview(null)
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
   const handleImageChange = (e) => {
@@ -34,45 +38,45 @@ const CreatePost = () => {
     if (file) {
       setImage(file)
       setImagePreview(URL.createObjectURL(file))
-      if(!modalOpen){
+      if (!modalOpen) {
         handleOpenModal()
       }
-    } 
+    }
   }
 
- const handlePost = async () => {
-   if (!content.trim() && !image) {
-     toast.error('Post content or image required')
-     return
-   }
+  const handlePost = async () => {
+    if (!content.trim() && !image) {
+      toast.error('Post content or image required')
+      return
+    }
 
-   const formData = new FormData()
-   formData.append('content', content)
-   if (image) {
-     formData.append('media', image) // key must match multer field name
-   }
+    const formData = new FormData()
+    formData.append('content', content)
+    if (image) {
+      formData.append('media', image) // key must match multer field name
+    }
 
-   try {
-     setCreatingPostLoading(true)
-     const res = await addPost(formData)
-     if (res.success) {
-       toast.success('Post created successfully')
-       handleCloseModal()
-     } else {
-       toast.error(res.message || 'Failed to create post')
-     }
-     setCreatingPostLoading(false)
-   } catch (err) {
-     console.error(err)
-     setCreatingPostLoading(false)
-     toast.error('Something went wrong while posting')
-   }
- }
+    try {
+      setCreatingPostLoading(true)
+      const res = await addPost(formData)
+      if (res.success) {
+        toast.success('Post created successfully')
+        handleCloseModal()
+      } else {
+        toast.error(res.message || 'Failed to create post')
+      }
+      setCreatingPostLoading(false)
+    } catch (err) {
+      console.error(err)
+      setCreatingPostLoading(false)
+      toast.error('Something went wrong while posting')
+    }
+  }
 
   return (
     <>
       {/* Rounded rectangle clickable area to open modal */}
-      <div className="w-full max-w-xl flex items-center gap-4 mb-6 bg-white py-6 px-3 rounded-lg border-[2px] border-base-300">
+      <div className="friendkit-create-post w-full max-w-xl flex items-center gap-4">
         <div className="avatar">
           <div className="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
             {user?.image ? (
@@ -102,7 +106,9 @@ const CreatePost = () => {
           className="btn btn-ghost btn-circle text-2xl"
           onClick={(e) => {
             e.stopPropagation()
-            fileInputRef.current.click()
+            if (fileInputRef.current) {
+              fileInputRef.current.click()
+            }
           }}
         >
           <IoMdImages />
@@ -235,4 +241,4 @@ const CreatePost = () => {
   )
 }
 
-export default CreatePost 
+export default CreatePost

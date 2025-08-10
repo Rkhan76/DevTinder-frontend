@@ -101,15 +101,18 @@ This project is licensed under the [MIT License](LICENSE).
 3- make the ui better
 4- make the ui responsive
 
-<!-- Main parts of application -->
+<!-- Major parts of application -->
 1- posts
     => user
-       => add post
-         => fix ui
-         => open the modal if user add the image first
-         => open the modal if user try to write a post
-       => edit post
-       => delete post
+      => post card
+        => show a dropdown on click on three dot on postcard
+      
+      => add post
+        => fix ui [✓]
+        => open the modal if user add the image first [✓]
+        => open the modal if user try to write a post [✓]
+      => edit post
+      => delete post
 2- chat application
 3- notification
 4- friend request

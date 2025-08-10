@@ -2,6 +2,9 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { onLikePost } from '../api/postApi'
 import { getAvatarColor, getInitials } from '../utils/userAvtar'
+import { FaRegCommentDots, FaRetweet } from 'react-icons/fa'
+import { FaRegHeart } from 'react-icons/fa'
+import { IoIosShareAlt } from 'react-icons/io'
 
 const PostCard = ({ post }) => {
   const {
@@ -28,7 +31,7 @@ const PostCard = ({ post }) => {
 
   const [liked, setLiked] = useState(isLiked)
   const [likeCount, setLikeCount] = useState(likesCount)
-
+  const [modalOpen, setModalOpen] = useState(false)
 
   const handleLike = async () => {
     try {
@@ -53,7 +56,7 @@ const PostCard = ({ post }) => {
   // const userInitials = getInitials(fullName)
 
   return (
-    <div className="bg-gray-50 rounded-xl shadow-md my-4 overflow-hidden mx-auto font-sans">
+    <div className="relative bg-gray-50 rounded-xl shadow-md my-4 overflow-hidden mx-auto font-sans">
       {/* Header */}
       <div className="flex justify-between items-center p-4 bg-white">
         <div className="flex items-center gap-3">
@@ -65,7 +68,9 @@ const PostCard = ({ post }) => {
             />
           ) : (
             <div
-              className={`${getAvatarColor(fullName)} flex items-center justify-center w-12 h-12 rounded-full  border-2 border-gray-200 font-semibold text-gray-700 text-lg shadow-sm`}
+              className={`${getAvatarColor(
+                fullName
+              )} flex items-center justify-center w-12 h-12 rounded-full  border-2 border-gray-200 font-semibold text-gray-700 text-lg shadow-sm`}
             >
               {getInitials(fullName)}
             </div>
@@ -86,7 +91,11 @@ const PostCard = ({ post }) => {
             </p>
           </div>
         </div>
-        <button className="bg-transparent border-none cursor-pointer p-2 rounded-full hover:bg-gray-50 transition-colors duration-200">
+        {/* dropdown button */}
+        <button
+          onClick={() => setModalOpen(true)}
+          className="bg-transparent border-none cursor-pointer p-2 rounded-full hover:bg-gray-50 transition-colors duration-200"
+        >
           <span className="text-lg text-gray-500 font-bold">⋮</span>
         </button>
       </div>
@@ -104,35 +113,11 @@ const PostCard = ({ post }) => {
             alt="Post content"
             className="w-full h-auto block object-cover"
           />
-
-          {/* Action buttons overlay */}
-          <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-            <button
-              className="w-11 h-11 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg text-white"
-              onClick={handleComment}
-            >
-              💬
-            </button>
-            <button
-              className="w-11 h-11 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg text-white"
-              onClick={handleShare}
-            >
-              🔗
-            </button>
-            <button
-              className={`w-11 h-11 rounded-full shadow-lg transition-all duration-200 ${
-                liked ? 'bg-red-500 scale-110 text-white' : 'bg-white'
-              }`}
-              onClick={handleLike}
-            >
-              {liked ? '🤍' : '❤️'}
-            </button>
-          </div>
         </div>
       )}
 
       {/* Footer */}
-      <div className="p-4 bg-white border-t border-gray-200">
+      <div className="px-4 py-2 bg-white border-t border-gray-200">
         <div className="flex items-center gap-2 mb-3">
           <div className="flex -space-x-2">
             {likedBy.slice(0, 3).map((user, index) => (
@@ -154,27 +139,115 @@ const PostCard = ({ post }) => {
           </span>
         </div>
 
-        <div className="flex justify-end gap-4">
-          <div className="flex items-center gap-1">
-            <span className="text-base text-gray-500">❤️</span>
-            <span className="text-sm text-gray-900 font-medium">
-              {likeCount}
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="text-base text-gray-500">🔗</span>
-            <span className="text-sm text-gray-900 font-medium">
-              {sharesCount}
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="text-base text-gray-500">💬</span>
-            <span className="text-sm text-gray-900 font-medium">
-              {commentsCount}
-            </span>
-          </div>
+        {/* Action buttons for like , comment, repost, share*/}
+        <div className="flex gap-3 items-center">
+          <button
+            onClick={handleLike}
+            className={`p-2 rounded-full transition-all duration-200 shadow-sm hover:shadow-md hover:scale-110 ${
+              liked ? 'bg-red-100 text-red-500' : 'bg-white text-gray-700'
+            }`}
+          >
+            <FaRegHeart className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={handleComment}
+            className="p-2 rounded-full bg-white text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md hover:bg-gray-100 hover:scale-110"
+          >
+            <FaRegCommentDots className="w-5 h-5" />
+          </button>
+
+          <button
+            // onClick={handleRepost}
+            className="p-2 rounded-full bg-white text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md hover:bg-gray-100 hover:scale-110"
+          >
+            <FaRetweet className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={handleShare}
+            className="p-2 rounded-full bg-white text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md hover:bg-gray-100 hover:scale-110"
+          >
+            <IoIosShareAlt className="w-5 h-5" />
+          </button>
         </div>
       </div>
+
+      {/* Dropdown Modal for Post Card */}
+      {modalOpen && (
+        <div className="absolute top-8 right-0 w-48 bg-white  rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700">
+          <ul className="py-1">
+            <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center">
+              <svg
+                className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+              Edit Post
+            </li>
+            <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center text-red-500">
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+              Delete Post
+            </li>
+            <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center">
+              <svg
+                className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              Report Post
+            </li>
+            <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center">
+              <svg
+                className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                />
+              </svg>
+              Share Post
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

@@ -34,24 +34,30 @@ const friends = [
 ]
 
 const SuggestedFriends = () => (
-  <div className="bg-white rounded-2xl shadow p-4 w-full max-w-xs mx-auto mb-8">
-    <div className="flex items-center justify-between mb-2">
-      <span className="font-semibold text-base text-gray-700">Suggested Friends</span>
-      <button className="btn btn-ghost btn-xs btn-circle text-lg text-gray-400"><span>⋮</span></button>
+  <div className="friendkit-suggested-friends w-full max-w-xs mx-auto mb-8">
+    <div className="flex items-center justify-between mb-4">
+      <span className="font-semibold text-lg text-slate-800">
+        Suggested Friends
+      </span>
+      <button className="btn btn-ghost btn-xs btn-circle text-lg text-slate-500 hover:text-slate-700 transition-colors">
+        <span>⋮</span>
+      </button>
     </div>
-    <ul className="divide-y divide-gray-100">
+    <ul className="divide-y divide-slate-100">
       {friends.map((f, i) => (
-        <li key={f.name} className="flex items-center gap-3 py-3">
+        <li key={f.name} className="flex items-center gap-3 py-4">
           <div className={`avatar ${f.color} rounded-full p-1`}>
             <div className="w-10 h-10 rounded-full overflow-hidden">
               <img src={f.avatar} alt={f.name} />
             </div>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-semibold text-gray-800 text-sm truncate">{f.name}</div>
-            <div className="text-xs text-gray-400 truncate">{f.location}</div>
+            <div className="font-semibold text-slate-800 text-sm truncate">
+              {f.name}
+            </div>
+            <div className="text-xs text-slate-500 truncate">{f.location}</div>
           </div>
-          <button className="btn btn-ghost btn-circle text-xl text-gray-400 hover:text-primary">
+          <button className="btn btn-ghost btn-circle text-xl text-slate-500 hover:text-primary transition-colors">
             <FiUserPlus />
           </button>
         </li>
@@ -60,4 +66,4 @@ const SuggestedFriends = () => (
   </div>
 )
 
-export default SuggestedFriends 
+export default SuggestedFriends

@@ -7,22 +7,36 @@ export const FromScratch = ({ posts, fetchData, loading, error }) => {
 
   return (
     <div>
-      <div className="flex justify-between bg-base-100 py-1 px-2 rounded-xl border border-gray-300">
-        <div className="flex flex-col justify-center">
-          <p className="text-xl  text-gray-900">Posts</p>
-        </div>
-          <div className='pt-1'>
+      <div className="friendkit-card mb-6 p-6">
+        <div className="flex justify-between items-center">
+          <div className="flex flex-col">
+            <h2 className="text-2xl font-bold text-slate-800">Posts</h2>
+            <p className="text-slate-600 mt-1">Discover what's happening</p>
+          </div>
+          <div className="flex gap-3">
             <ProfileButton text={'Recent'} />
             <ProfileButton text={'Popular'} />
           </div>
+        </div>
       </div>
-      <div>
+
+      <div className="space-y-6">
         {posts.map((post, index) => (
           <PostCard post={post} key={index} />
         ))}
       </div>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error.message}</p>}
+
+      {loading && (
+        <div className="flex justify-center py-8">
+          <div className="loading loading-spinner loading-lg text-indigo-600"></div>
+        </div>
+      )}
+
+      {error && (
+        <div className="friendkit-card p-6 text-center">
+          <p className="text-red-500">Error: {error.message}</p>
+        </div>
+      )}
     </div>
   )
 }
