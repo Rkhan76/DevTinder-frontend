@@ -3,8 +3,9 @@ import toast from 'react-hot-toast'
 import { onLikePost } from '../api/postApi'
 import { getAvatarColor, getInitials } from '../utils/userAvtar'
 import { FaRegCommentDots, FaRetweet } from 'react-icons/fa'
-import { FaRegHeart } from 'react-icons/fa'
+import { FaRegHeart, FaHeart } from 'react-icons/fa'
 import { IoIosShareAlt } from 'react-icons/io'
+import { useSelector } from 'react-redux'
 
 const PostCard = ({ post }) => {
   const {
@@ -29,9 +30,24 @@ const PostCard = ({ post }) => {
     likedBy = [],
   } = post
 
-  const [liked, setLiked] = useState(isLiked)
+  const isLikedbyCurrentUser = () => {
+    const likedByCurrentUser = likedBy.filter(
+      (userLiked) => userLiked._id === user._id
+    )
+    if (likedByCurrentUser.length > 0) return true
+    return false
+  }
+  
+  
   const [likeCount, setLikeCount] = useState(likesCount)
   const [modalOpen, setModalOpen] = useState(false)
+  const [commentModal,setCommentModal] = useState(false)
+  const user = useSelector((state)=> state.auth.user)
+  const [liked, setLiked] = useState(isLikedbyCurrentUser())
+
+  
+
+  
 
   const handleLike = async () => {
     try {
@@ -117,63 +133,80 @@ const PostCard = ({ post }) => {
       )}
 
       {/* Footer */}
-      <div className="px-4 py-2 bg-white border-t border-gray-200">
-        <div className="flex items-center gap-2 mb-3">
+      <div className="px-4 bg-white">
+        <div className="flex items-center gap-2 mb-1 mt-1">
           <div className="flex -space-x-2">
-            {likedBy.slice(0, 3).map((user, index) => (
-              <img
-                key={index}
-                src={user.image}
-                alt={user.fullName}
-                className="w-6 h-6 rounded-full border-2 border-white object-cover"
-                title={user.fullName}
-              />
-            ))}
+            {likedBy
+              .filter((liker) => liker?._id !== user._id)
+              .slice(0, 3)
+              .map((liker, index) => (
+                <img
+                  key={index}
+                  src={liker.image}
+                  alt={liker.fullName}
+                  className="w-6 h-6 rounded-full border-2 border-white object-cover"
+                  title={liker.fullName}
+                />
+              ))}
           </div>
-          <span className="text-sm text-gray-500">
-            {likedBy[0]?.fullName}
-            {likeCount > likedBy.length
-              ? ` and ${likeCount - likedBy.length} others`
-              : ''}{' '}
-            liked this
-          </span>
+
+          {likedBy.length > 0 && (
+            <span className="text-sm text-gray-500">
+              {(() => {
+                const otherLikers = likedBy.filter(
+                  (liker) => liker?._id !== user._id
+                )
+
+                const firstName = otherLikers[0]?.fullName || ''
+
+                return (
+                  (firstName && <>
+                    {firstName}
+                    {likeCount > likedBy.length
+                      ? ` and ${likeCount - likedBy.length} others`
+                      : ''}
+                    {firstName && ' '}liked this
+                  </>)
+                )
+              })()}
+            </span>
+          )}
         </div>
 
-        {/* Action buttons for like , comment, repost, share*/}
-        <div className="flex gap-3 items-center">
+        {/* Action buttons for like , comment, repost, share */}
+        <div className="border-t border-gray-200 flex items-center py-1 w-full">
           <button
             onClick={handleLike}
-            className={`p-2 rounded-full transition-all duration-200 shadow-sm hover:shadow-md hover:scale-110 ${
-              liked ? 'bg-red-100 text-red-500' : 'bg-white text-gray-700'
-            }`}
+            className="flex-1 flex justify-center p-2 transition-colors duration-200 hover:bg-gray-100 hover:rounded-md"
           >
-            <FaRegHeart className="w-5 h-5" />
+            {liked ? (
+              <FaHeart className="w-5 h-5 text-red-500" />
+            ) : (
+              <FaRegHeart className="w-5 h-5 text-gray-700" />
+            )}
           </button>
 
           <button
-            onClick={handleComment}
-            className="p-2 rounded-full bg-white text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md hover:bg-gray-100 hover:scale-110"
+            onClick={() => setCommentModal(!commentModal)}
+            className="flex-1 flex justify-center p-2 bg-white text-gray-700 transition-colors duration-200 hover:bg-gray-100 hover:rounded-md"
           >
             <FaRegCommentDots className="w-5 h-5" />
           </button>
 
-          <button
-            // onClick={handleRepost}
-            className="p-2 rounded-full bg-white text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md hover:bg-gray-100 hover:scale-110"
-          >
+          <button className="flex-1 flex justify-center p-2 bg-white text-gray-700 transition-colors duration-200 hover:bg-gray-100 hover:rounded-md">
             <FaRetweet className="w-5 h-5" />
           </button>
 
           <button
             onClick={handleShare}
-            className="p-2 rounded-full bg-white text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md hover:bg-gray-100 hover:scale-110"
+            className="flex-1 flex justify-center p-2 bg-white text-gray-700 transition-colors duration-200 hover:bg-gray-100 hover:rounded-md"
           >
             <IoIosShareAlt className="w-5 h-5" />
           </button>
         </div>
       </div>
 
-      {/* Dropdown Modal for Post Card */}
+      {/* Dropdown Modal for Post Card for three dots */}
       {modalOpen && (
         <div className="absolute top-8 right-0 w-48 bg-white  rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700">
           <ul className="py-1">
@@ -248,6 +281,11 @@ const PostCard = ({ post }) => {
           </ul>
         </div>
       )}
+
+      {/* Dropdown modal for comment section */}
+     {commentModal && <div>
+        hllo iam here
+      </div>}
     </div>
   )
 }
