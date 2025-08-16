@@ -166,7 +166,6 @@ const Navbar = () => {
               <div className="relative" ref={friendRequestsRef}>
                 <button
                   className="relative p-3 rounded-xl bg-gray-50 hover:bg-blue-50 transition-all duration-300 group"
-                  onMouseEnter={() => setShowFriendRequests(true)}
                   onClick={() => navigate('/notifications')}
                 >
                   <IoIosNotificationsOutline className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
