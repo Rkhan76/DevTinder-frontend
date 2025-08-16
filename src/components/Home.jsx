@@ -1,21 +1,76 @@
-import React from 'react'
-import CreatePost from './CreatePost'
-import Feed from './Feed'
-import SuggestedFriends from './SuggestedFriends'
+import CreatePost from "./CreatePost"
+import Feed from "./Feed"
+import NetworkActivity from "./homePageComponents/NetworkAcitivity"
+import QuickStats from "./homePageComponents/QuickStats"
+import SuggestedFriends from "./homePageComponents/SuggestedFriends"
+import TrendingTopics from "./homePageComponents/TrendingTopics"
+
+
 
 const Home = () => {
   return (
     <>
-      <main className="flex flex-col md:flex-row bg-gradient-to-br from-base-100 to-base-200 min-h-screen py-8 w-full justify-center items-start gap-8 px-4">
-        <div className="w-full max-w-xl flex flex-col items-center min-w-0 gap-6">
-          <CreatePost />
-          <Feed />
-        </div>
-        <aside className="hidden md:flex md:flex-col md:items-start md:justify-start md:w-[320px] lg:w-[350px] xl:w-[380px]">
-          <div className="sticky top-24 w-full">
-            <SuggestedFriends />
+      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="bg-white border-b border-slate-200 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 py-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900">
+                  Welcome back to DevTinder
+                </h1>
+                <p className="text-slate-600 mt-1">
+                  Connect with developers, share your projects, and grow your
+                  network
+                </p>
+              </div>
+              <div className="hidden md:flex items-center space-x-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">1.2k</div>
+                  <div className="text-xs text-slate-500">Connections</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">89</div>
+                  <div className="text-xs text-slate-500">Posts</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">456</div>
+                  <div className="text-xs text-slate-500">Views</div>
+                </div>
+              </div>
+            </div>
           </div>
-        </aside>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex flex-col lg:flex-row gap-8">
+            <aside className="hidden lg:block lg:w-80">
+              <div className="sticky top-24 space-y-6">
+                <QuickStats/>
+                <TrendingTopics />
+              </div>
+            </aside>
+
+            <div className="flex-1 max-w-2xl mx-auto lg:mx-0">
+              <div className="space-y-6">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                  <CreatePost />
+                </div>
+                <Feed/>
+              </div>
+            </div>
+
+            <aside className="lg:w-80">
+              <div className="sticky top-24 space-y-6">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                  <SuggestedFriends />
+                </div>
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                  <NetworkActivity />
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
       </main>
     </>
   )
