@@ -12,6 +12,7 @@ import ChatApp from './components/ChatApp'
 import NotFound from './components/NotFound'
 import SearchResults from './components/SearchResults'
 import Notifications from './components/Notifications'
+import MyNetwork from './components/MyNetwork'
 
 function App() {
   return (
@@ -23,7 +24,6 @@ function App() {
 
           <Route path="/" element={<Body />}>
             <Route index element={<RedirectBasedOnAuth />} />
-
             <Route
               path="/home"
               element={
@@ -64,11 +64,18 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/mynetwork/grow" element=
+            {
+              <ProtectedRoute>
+                <MyNetwork/>
+              </ProtectedRoute>
+            }
+            /> 
             <Route
               path="/notifications"
               element={
                 <ProtectedRoute>
-                  <Notifications />
+                  <Notifications/>
                 </ProtectedRoute>
               }
             />

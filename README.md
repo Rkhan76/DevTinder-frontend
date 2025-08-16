@@ -88,7 +88,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 <!-- Problem i am facing during project developemnt -->
 1- problem of erasing the redux store data on refreshing the application  => soln use redux-presistance
-2- 
+2- In backend the problem of populating the data in post like if comment user id is present then populate it with that user name , image and other things
 
 <!-- Work to do -->
 1- navbar avtar show user image and if image is not present then show the name letter  =>  // Done
@@ -103,16 +103,18 @@ This project is licensed under the [MIT License](LICENSE).
 
 <!-- Major parts of application -->
 1- posts
-    => user
-      => post card
-        => show a dropdown on click on three dot on postcard
-      
-      => add post
-        => fix ui [✓]
-        => open the modal if user add the image first [✓]
-        => open the modal if user try to write a post [✓]
-      => edit post
-      => delete post
+   => User
+      1- Add post
+      2- Edit post
+      3- Delete Post
+      4- add comment
+         => 
+      5- update comment
+      6- delete comment
+      7- add like
+      8- undo like
+      9- repost
+      10- share post
 2- chat application
 3- notification
 4- friend request
