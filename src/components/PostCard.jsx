@@ -12,6 +12,7 @@ import {
 import { IoIosShareAlt } from 'react-icons/io'
 import { useSelector } from 'react-redux'
 import { timeAgo } from '../utils/timeformat'
+import { Link } from 'react-router-dom'
 
 const PostCard = ({ post }) => {
   const buttonClasses =
@@ -30,6 +31,8 @@ const PostCard = ({ post }) => {
     comments = [],
     author: { fullName, image },
   } = post
+
+  // console.log('PostCard post:', post)
 
   const user = useSelector((state) => state.auth.user)
 
@@ -95,11 +98,14 @@ const PostCard = ({ post }) => {
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 mb-6 border border-gray-100 overflow-hidden">
       {/* Header */}
       <div className="flex justify-between items-center p-6 pb-4">
-        <div className="flex items-center gap-4">
+        <Link
+          to={`/profile/${post.author._id}`}
+          className="flex items-center gap-4"
+        >
           {image ? (
             <div className="relative group">
               <img
-                src={image || '/placeholder.svg'}
+                src={image}
                 alt={fullName}
                 className="w-14 h-14 rounded-full object-cover ring-2 ring-blue-100 group-hover:ring-blue-200 transition-all duration-300 transform group-hover:scale-105"
               />
@@ -122,7 +128,7 @@ const PostCard = ({ post }) => {
               {timeAgo(new Date(createdAt))}
             </p>
           </div>
-        </div>
+        </Link>
         <button
           onClick={() => setModalOpen(true)}
           className="p-2 rounded-full hover:bg-gray-100 transition-all duration-200 group border-0 bg-transparent"

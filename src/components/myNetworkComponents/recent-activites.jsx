@@ -65,7 +65,7 @@ export function RecentActivity() {
                   </span>
                 </p>
                 <p className="text-xs text-base-content/50 mt-1 flex items-center gap-1">
-                  <div className="w-1 h-1 bg-base-content/40 rounded-full"></div>
+                  <span className="w-1 h-1 bg-base-content/40 rounded-full"></span>
                   {activity.time} ago
                 </p>
               </div>

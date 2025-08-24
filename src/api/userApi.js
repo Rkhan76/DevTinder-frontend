@@ -5,6 +5,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL
 // Get user by ID
 export const getUserById = async (userId) => {
   const api = `${BASE_URL}/user/${userId}`
+  console.log('Fetching user from:', api)
   try {
     const response = await axios.get(api)
     return response.data

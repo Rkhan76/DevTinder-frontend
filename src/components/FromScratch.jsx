@@ -1,9 +1,14 @@
+import { useCallback } from 'react'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 import PostCard from './PostCard'
 import ProfileButton from './ProfileButton'
 
 export const FromScratch = ({ posts, fetchData, loading, error }) => {
-  useInfiniteScroll(fetchData)
+  // Memoize fetchData to prevent unnecessary re-renders
+  const handleLoadMore = useCallback((page) => fetchData(page), [fetchData])
+
+  // Pass loading state to useInfiniteScroll to prevent requests while loading
+  useInfiniteScroll(handleLoadMore, loading)
 
   return (
     <div>

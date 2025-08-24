@@ -112,11 +112,11 @@ const Navbar = () => {
   }
 
   // Fetch friend requests on component mount
-  useEffect(() => {
-    if (user) {
-      fetchFriendRequests()
-    }
-  }, [user])
+  // useEffect(() => {
+  //   if (user) {
+  //     fetchFriendRequests()
+  //   }
+  // }, [user])
 
   // Close friend requests dropdown when clicking outside
   useEffect(() => {
@@ -343,7 +343,7 @@ const Navbar = () => {
                     <div className="flex items-center space-x-3">
                       {user?.image ? (
                         <img
-                          src={user?.image || '/placeholder.svg'}
+                          src={user?.image}
                           alt={user?.fullName}
                           className="w-12 h-12 rounded-full object-cover"
                         />
@@ -386,7 +386,7 @@ const Navbar = () => {
                     <div className="h-px bg-gray-200 my-2" />
 
                     <Link
-                      to="/profile"
+                      to={`/profile/${user?._id}`}
                       className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 rounded-xl transition-colors group"
                     >
                       <span className="font-medium text-gray-700">Profile</span>

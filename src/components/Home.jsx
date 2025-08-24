@@ -52,9 +52,7 @@ const Home = () => {
 
             <div className="flex-1 max-w-2xl mx-auto lg:mx-0">
               <div className="space-y-6">
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                  <CreatePost />
-                </div>
+                <CreatePost />
                 <Feed/>
               </div>
             </div>
