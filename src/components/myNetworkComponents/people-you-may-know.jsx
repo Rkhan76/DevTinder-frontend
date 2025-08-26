@@ -11,17 +11,18 @@ export function PeopleYouMayKnow() {
   const [hasMore, setHasMore] = useState(true)
   const [seeMoreClicked, setSeeMoreClicked] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [status, setStatus] = useState(null)
   const [currentFriendRequestHit, setCurrentFriendRequestHit] = useState(null)
-  const limit = 6 
+  const limit = 6
 
   const handleConnect = async (userId) => {
     try {
       setLoading(true)
       setCurrentFriendRequestHit(userId)
+
       const res = await sendFriendRequest(userId)
 
       if (res.success) {
+        // update status for that user
         setSuggestions((prev) =>
           prev.map((person) =>
             person.id === userId ? { ...person, status: 'Pending' } : person
@@ -36,24 +37,22 @@ export function PeopleYouMayKnow() {
     }
   }
 
-
   const fetchData = async (pageNo = 1) => {
     try {
       const res = await getPeopleYouMayKnow(pageNo, limit)
-      console.log(res, "response of the user people you may know list")
-     const formatted = res?.data?.map((user) => ({
-       id: user._id,
-       name: user.fullName,
-       title: user.currentRole || 'Role not specified',
-       avatar:
-         user.image && user.image !== 'null' && user.image !== ''
-           ? user.image
-           : null,
-       mutualConnections: user.mutualConnections || 0,
-       status: user.receivedFriendRequests.includes(/* current user id */)
-         ? 'Pending'
-         : 'Connect',
-     }))
+      console.log(res, 'response of the user people you may know list')
+
+      const formatted = res?.data?.map((user) => ({
+        id: user._id,
+        name: user.fullName,
+        title: user.currentRole || 'Role not specified',
+        avatar:
+          user.image && user.image !== 'null' && user.image !== ''
+            ? user.image
+            : null,
+        mutualConnections: user.mutualConnections || 0,
+        status: 'Connect', // default until user clicks "Connect"
+      }))
 
       if (!formatted || formatted.length === 0) {
         setHasMore(false)
@@ -167,13 +166,11 @@ export function PeopleYouMayKnow() {
                 >
                   {person.status === 'Pending' ? 'Pending' : 'Connect'}
                 </button>
-
               </div>
             </div>
           ))}
         </div>
 
-        {/* Footer actions */}
         {seeMoreClicked && (
           <div className="mt-6 flex justify-center">
             {hasMore ? (

@@ -44,3 +44,36 @@ export const getPeopleWhoSentYouTheFriendRequest = async () => {
     throw error
   }
 }
+
+
+// Accept friend request
+export const acceptTheFriendRequest = async (userId) => {
+  const api = `${BASE_URL}/user/accept-friend-request/${userId}`
+
+  try {
+    const response = await axios.post(api)
+    return response.data 
+  } catch (error) {
+    console.error(
+      'Something went wrong while accepting the friend request:',
+      error
+    )
+    throw error
+  }
+}
+
+// Reject friend request
+export const rejectTheFriendRequest = async (userId) => {
+  const api = `${BASE_URL}/user/reject-friend-request/${userId}`
+
+  try {
+    const response = await axios.post(api)
+    return response.data
+  } catch (error) {
+    console.error(
+      'Something went wrong while rejecting the friend request:',
+      error
+    )
+    throw error
+  }
+}

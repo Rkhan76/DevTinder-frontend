@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
-import { getPeopleWhoSentYouTheFriendRequest } from '../../api/friendsApi'
+import {
+  getPeopleWhoSentYouTheFriendRequest,
+  acceptTheFriendRequest,
+  rejectTheFriendRequest,
+} from '../../api/friendsApi'
+import toast from 'react-hot-toast'
 
 export function InvitationsSection() {
   const [invitations, setInvitations] = useState([])
   const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState(null) // track userId being acted on
 
   useEffect(() => {
     const fetchInvitations = async () => {
@@ -33,6 +39,40 @@ export function InvitationsSection() {
 
     fetchInvitations()
   }, [])
+
+  const handleAccept = async (userId) => {
+    try {
+      setActionLoading(userId)
+      const res = await acceptTheFriendRequest(userId)
+      console.log(res, "accept the friend request")
+      if (res.success) {
+        toast.success('Friend request accepted')
+        setInvitations((prev) => prev.filter((inv) => inv.id !== userId))
+      }
+    } catch (error) {
+      toast.error('Failed to accept request')
+      console.error(error)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleReject = async (userId) => {
+    try {
+      setActionLoading(userId)
+      const res = await rejectTheFriendRequest(userId)
+      console.log(res, 'reject the friend request')
+      if (res.success) {
+        toast.success('Friend request rejected')
+        setInvitations((prev) => prev.filter((inv) => inv.id !== userId))
+      }
+    } catch (error) {
+      toast.error('Failed to reject request')
+      console.error(error)
+    } finally {
+      setActionLoading(null)
+    }
+  }
 
   return (
     <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300">
@@ -84,9 +124,23 @@ export function InvitationsSection() {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <button className="btn btn-primary btn-sm">Accept</button>
-                  <button className="btn btn-outline btn-sm hover:btn-error">
-                    <X className="w-4 h-4" />
+                  <button
+                    onClick={() => handleAccept(invitation.id)}
+                    disabled={actionLoading === invitation.id}
+                    className="btn btn-primary btn-sm"
+                  >
+                    {actionLoading === invitation.id ? '...' : 'Accept'}
+                  </button>
+                  <button
+                    onClick={() => handleReject(invitation.id)}
+                    disabled={actionLoading === invitation.id}
+                    className="btn btn-outline btn-sm hover:btn-error"
+                  >
+                    {actionLoading === invitation.id ? (
+                      '...'
+                    ) : (
+                      <X className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </div>

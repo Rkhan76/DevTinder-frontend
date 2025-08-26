@@ -28,8 +28,10 @@ export const fetchUserPosts = async (userId, page = 1) => {
 // Send friend request
 export const sendFriendRequest = async (userId) => {
   const api = `${BASE_URL}/user/add-friend/${userId}`
+  console.log("request has come to sendfreind request on userApi function ")
   try {
     const response = await axios.post(api)
+    console.log("response on sendFriendRequest api ", response)
     return response.data
   } catch (error) {
     throw error

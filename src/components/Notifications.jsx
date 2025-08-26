@@ -1,86 +1,88 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NotificationHeader } from './notificationComponents/notifications-header'
 import { NotificationFilters } from './notificationComponents/notifications-filters'
 import { NotificationList } from './notificationComponents/notifications-list'
+import {
+  fetchNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  deleteNotification,
+} from '../api/notificationApi'
+import toast from 'react-hot-toast'
 
-const  Notifications = () =>{
+const Notifications = () => {
   const [activeFilter, setActiveFilter] = useState('all')
-  const [notifications, setNotifications] = useState([
-    {
-      id: '1',
-      type: 'connection',
-      title: 'Sarah Johnson accepted your connection request',
-      description: 'You are now connected with Sarah Johnson',
-      time: '2 hours ago',
-      read: false,
-      avatar: '/professional-woman-diverse.png',
-      action: 'connection_accepted',
-    },
-    {
-      id: '2',
-      type: 'like',
-      title: 'Michael Chen and 12 others liked your post',
-      description:
-        'Your post about React development trends is getting attention',
-      time: '4 hours ago',
-      read: false,
-      avatar: '/professional-man.png',
-      action: 'post_liked',
-    },
-    {
-      id: '3',
-      type: 'comment',
-      title: 'Emma Davis commented on your post',
-      description: '"Great insights on the future of web development!"',
-      time: '6 hours ago',
-      read: true,
-      avatar: '/professional-woman-designer.png',
-      action: 'post_commented',
-    },
-    {
-      id: '4',
-      type: 'job',
-      title: 'New job opportunity matches your profile',
-      description: 'Senior Frontend Developer at TechCorp - Remote',
-      time: '1 day ago',
-      read: false,
-      avatar: null,
-      action: 'job_match',
-    },
-    {
-      id: '5',
-      type: 'mention',
-      title: 'Alex Rodriguez mentioned you in a post',
-      description: 'Check out this amazing work by @you on the latest project',
-      time: '2 days ago',
-      read: true,
-      avatar: '/professional-data-scientist.png',
-      action: 'mentioned',
-    },
-    {
-      id: '6',
-      type: 'invitation',
-      title: 'You have a new invitation to connect',
-      description: 'Jennifer Wilson wants to connect with you',
-      time: '3 days ago',
-      read: false,
-      avatar: '/professional-woman-diverse.png',
-      action: 'connection_request',
-    },
-  ])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [notifications, setNotifications] = useState([])
 
-  const markAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif))
-    )
+  const mapNotification = (notif) => ({
+    id: notif._id,
+    type: notif.type,
+    title: notif.content || 'New Notification',
+    description: notif.link || '',
+    time: new Date(notif.createdAt).toLocaleString(),
+    read: notif.isRead,
+    avatar: notif.sender?.image || '/default-avatar.png',
+    action: notif.type,
+  })
+
+  // ✅ Fetch notifications
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setLoading(true)
+        const data = await fetchNotifications()
+        const mapped = (data.notifications || []).map(mapNotification)
+        setNotifications(mapped)
+      } catch (err) {
+        console.error(err)
+        setError('Failed to load notifications')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    getData()
+  }, [])
+
+  // ✅ Mark single notification as read
+  const handleMarkAsRead = async (id) => {
+    try {
+      await markNotificationAsRead(id)
+      toast.success("successfully mark as read")
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif.id === id ? { ...notif, read: true } : notif
+        )
+      )
+    } catch (err) {
+      console.error('Error marking as read:', err)
+    }
   }
 
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })))
+  // ✅ Mark all as read
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllNotificationsAsRead()
+      toast.success('successfully all notification mark as read')
+      setNotifications((prev) =>
+        prev.map((notif) => ({ ...notif, read: true }))
+      )
+    } catch (err) {
+      console.error('Error marking all as read:', err)
+    }
   }
 
-  const deleteNotification = (id) => {
-    setNotifications((prev) => prev.filter((notif) => notif.id !== id))
+  // ✅ Delete notification
+  const handleDelete = async (id) => {
+    try {
+      await deleteNotification(id)
+      toast.success('successfully delete the notification')
+      setNotifications((prev) => prev.filter((notif) => notif.id !== id))
+    } catch (err) {
+      console.error('Error deleting notification:', err)
+    }
   }
 
   const filteredNotifications = notifications.filter((notif) => {
@@ -93,7 +95,7 @@ const  Notifications = () =>{
     <div className="min-h-screen bg-gray-50">
       <NotificationHeader
         unreadCount={notifications.filter((n) => !n.read).length}
-        onMarkAllRead={markAllAsRead}
+        onMarkAllRead={handleMarkAllAsRead}
       />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -111,17 +113,24 @@ const  Notifications = () =>{
 
           {/* Notifications List */}
           <div className="lg:col-span-3">
-            <NotificationList
-              notifications={filteredNotifications}
-              onMarkAsRead={markAsRead}
-              onDelete={deleteNotification}
-            />
+            {loading ? (
+              <p>Loading notifications...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : filteredNotifications.length === 0 ? (
+              <p className="text-gray-500">No notifications found.</p>
+            ) : (
+              <NotificationList
+                notifications={filteredNotifications}
+                onMarkAsRead={handleMarkAsRead}
+                onDelete={handleDelete}
+              />
+            )}
           </div>
         </div>
       </div>
     </div>
   )
 }
-
 
 export default Notifications

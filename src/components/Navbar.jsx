@@ -282,10 +282,6 @@ const Navbar = () => {
                 )}
               </div>
 
-              <button className="p-3 rounded-xl bg-gray-50 hover:bg-red-50 transition-all duration-300 group">
-                <CiHeart className="w-5 h-5 text-gray-600 group-hover:text-red-500 transition-colors" />
-              </button>
-
               <Link
                 to="/chat"
                 className="p-3 rounded-xl bg-gray-50 hover:bg-green-50 transition-all duration-300 group"
