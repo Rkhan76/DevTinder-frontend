@@ -27,7 +27,7 @@ export const markNotificationAsRead = async (notificationId) => {
     const response = await axios.patch(api)
     return response.data
   } catch (error) {
-    console.error(`❌ Error marking notification ${notificationId} as read:`, error)
+    console.error(`Error marking notification ${notificationId} as read:`, error)
     throw error
   }
 }
@@ -52,7 +52,7 @@ export const deleteNotification = async (notificationId) => {
     const response = await axios.delete(api)
     return response.data
   } catch (error) {
-    console.error(`❌ Error deleting notification ${notificationId}:`, error)
+    console.error(`Error deleting notification ${notificationId}:`, error)
     throw error
   }
 }

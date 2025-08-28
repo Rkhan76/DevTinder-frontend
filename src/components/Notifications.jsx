@@ -9,12 +9,18 @@ import {
   deleteNotification,
 } from '../api/notificationApi'
 import toast from 'react-hot-toast'
+import { setNotificationsCount } from '../redux/slices/activityCountsSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Notifications = () => {
   const [activeFilter, setActiveFilter] = useState('all')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [notifications, setNotifications] = useState([])
+  const notificationsCount = useSelector(
+    (state) => state.activityCount.notifications
+  )
+  const dispatch = useDispatch()
 
   const mapNotification = (notif) => ({
     id: notif._id,
@@ -50,6 +56,7 @@ const Notifications = () => {
   const handleMarkAsRead = async (id) => {
     try {
       await markNotificationAsRead(id)
+      dispatch(setNotificationsCount(notificationsCount - 1))
       toast.success("successfully mark as read")
       setNotifications((prev) =>
         prev.map((notif) =>
@@ -65,6 +72,7 @@ const Notifications = () => {
   const handleMarkAllAsRead = async () => {
     try {
       await markAllNotificationsAsRead()
+      dispatch(setNotificationsCount(0))
       toast.success('successfully all notification mark as read')
       setNotifications((prev) =>
         prev.map((notif) => ({ ...notif, read: true }))
@@ -78,6 +86,7 @@ const Notifications = () => {
   const handleDelete = async (id) => {
     try {
       await deleteNotification(id)
+      dispatch(setNotificationsCount(notificationsCount - 1))
       toast.success('successfully delete the notification')
       setNotifications((prev) => prev.filter((notif) => notif.id !== id))
     } catch (err) {

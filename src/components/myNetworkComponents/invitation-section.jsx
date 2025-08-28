@@ -6,11 +6,19 @@ import {
   rejectTheFriendRequest,
 } from '../../api/friendsApi'
 import toast from 'react-hot-toast'
+import { useDispatch, useSelector } from 'react-redux'
+import { setFriendRequestsCount } from '../../redux/slices/activityCountsSlice'
+
+
 
 export function InvitationsSection() {
   const [invitations, setInvitations] = useState([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(null) // track userId being acted on
+  const dispatch = useDispatch()
+  const friendRequestsCount = useSelector(
+    (state) => state.activityCount.friendRequests
+  )
 
   useEffect(() => {
     const fetchInvitations = async () => {
@@ -44,8 +52,8 @@ export function InvitationsSection() {
     try {
       setActionLoading(userId)
       const res = await acceptTheFriendRequest(userId)
-      console.log(res, "accept the friend request")
       if (res.success) {
+        dispatch(setFriendRequestsCount(friendRequestsCount - 1))
         toast.success('Friend request accepted')
         setInvitations((prev) => prev.filter((inv) => inv.id !== userId))
       }
@@ -61,8 +69,8 @@ export function InvitationsSection() {
     try {
       setActionLoading(userId)
       const res = await rejectTheFriendRequest(userId)
-      console.log(res, 'reject the friend request')
       if (res.success) {
+        dispatch(setFriendRequestsCount(friendRequestsCount - 1))
         toast.success('Friend request rejected')
         setInvitations((prev) => prev.filter((inv) => inv.id !== userId))
       }
