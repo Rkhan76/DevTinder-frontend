@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { addCommentToPost, onLikePost, repostPost } from '../api/postApi'
 import { getAvatarColor, getInitials } from '../utils/userAvtar'
@@ -13,6 +13,12 @@ import { IoIosShareAlt } from 'react-icons/io'
 import { useSelector } from 'react-redux'
 import { timeAgo } from '../utils/timeformat'
 import { Link } from 'react-router-dom'
+import {
+  createSocket,
+  joinPostRoom,
+  leavePostRoom,
+  subscribeToComments,
+} from '../utils/socket'
 
 const PostCard = ({ post }) => {
   const buttonClasses =
@@ -31,8 +37,6 @@ const PostCard = ({ post }) => {
     comments = [],
     author: { fullName, image },
   } = post
-
-  // console.log('PostCard post:', post)
 
   const user = useSelector((state) => state.auth.user)
 
@@ -79,6 +83,24 @@ const PostCard = ({ post }) => {
     textareaRef.current.style.height = 'auto'
     textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
   }
+
+useEffect(() => {
+  if (!postId || !user?._id) return
+
+  const socket = createSocket(user.token)
+  joinPostRoom(postId)
+
+  subscribeToComments((newComment) => {
+    if (newComment.postId === postId) {
+      setCommentsList((prev) => [newComment, ...prev])
+    }
+  })
+
+  return () => {
+    leavePostRoom(postId)
+    socket.off('receive_comment')
+  }
+}, [postId, user])
 
   const handleAddComment = async () => {
     try {

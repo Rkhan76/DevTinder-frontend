@@ -11,6 +11,7 @@ const getBackendUrl = () => {
 
 let socket = null
 
+// ✅ Create socket instance with JWT token
 export const createSocket = (token) => {
   if (!socket) {
     socket = io(getBackendUrl(), {
@@ -22,13 +23,25 @@ export const createSocket = (token) => {
   return socket
 }
 
-// Join a post-specific room for real-time comments
+// ----------------- 🔹 Chat -----------------
+export const joinChatRoom = (roomId) => {
+  if (!socket) return
+  socket.emit('join_chat', roomId)
+}
+
+export const subscribeToMessages = (callback) => {
+  if (!socket) return
+  socket.on('receive_message', (message) => {
+    callback(message)
+  })
+}
+
+// ----------------- 🔹 Comments -----------------
 export const joinPostRoom = (postId) => {
   if (!socket) return
   socket.emit('join_post', postId)
 }
 
-// Listen for new comments on a post
 export const subscribeToComments = (callback) => {
   if (!socket) return
   socket.on('receive_comment', (comment) => {
@@ -36,7 +49,7 @@ export const subscribeToComments = (callback) => {
   })
 }
 
-// Listen for notifications for the logged-in user
+// ----------------- 🔹 Notifications -----------------
 export const subscribeToNotifications = (callback) => {
   if (!socket) return
   socket.on('receive_notification', (notification) => {
@@ -44,7 +57,12 @@ export const subscribeToNotifications = (callback) => {
   })
 }
 
-// Disconnect socket (on logout)
+// ----------------- 🔹 Cleanup -----------------
+export const leavePostRoom = (postId) => {
+  if (!socket) return
+  socket.emit('leave_post', postId)
+}
+
 export const disconnectSocket = () => {
   if (socket) {
     socket.disconnect()
