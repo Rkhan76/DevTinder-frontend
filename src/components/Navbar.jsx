@@ -143,9 +143,6 @@ const Navbar = () => {
       loadActivityCounts()
       // fetchFriendRequests()
 
-      // ✅ Auto-refresh every 30s
-      const interval = setInterval(loadActivityCounts, 30000)
-      return () => clearInterval(interval)
     }
   }, [user])
 

@@ -2,6 +2,20 @@ import axios from '../utils/axiosConfig'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
+
+export const saveFcmToken = async (token) => {
+  const api = `${BASE_URL}/notifications/save-fcm-token`
+  console.log(token, " token has reacht to hit api folder")
+  try {
+    const res = await axios.post(api,{token})
+    console.log(res, " response from the backend on saving token")
+    return res.data
+  } catch (err) {
+    console.error('Error saving FCM token:', err)
+    throw err
+  }
+}
+
 // Fetch people you may know
 export const fetchNotifications = async () => {
   const api = `${BASE_URL}/notifications/get-notifications`

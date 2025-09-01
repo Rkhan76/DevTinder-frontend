@@ -13,8 +13,47 @@ import NotFound from './components/NotFound'
 import SearchResults from './components/SearchResults'
 import Notifications from './components/Notifications'
 import MyNetwork from './components/MyNetwork'
+import { useEffect } from 'react'
+import { onMessageListener, requestForToken } from './firebase'
+import { saveFcmToken } from './api/notificationApi'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  setChatsCount,
+  setNotificationsCount,
+  setFriendRequestsCount,
+} from './redux/slices/activityCountsSlice'
 
 function App() {
+  const dispatch = useDispatch()
+  const { notificationsCount, chatsCount, friendRequestsCount } = useSelector(
+    (state) => state.activityCount
+  )
+  
+  useEffect(() => {
+    const setupFCM = async () => {
+      const token = await requestForToken()
+      if (token) {
+        console.log('FCM Token from frontend:', token)
+        await saveFcmToken(token)
+      }
+    }
+
+    setupFCM()
+
+    onMessageListener()
+      .then((payload) => {
+        console.log('Foreground notification received:', payload)
+        // Instead of alert, increase count in Redux
+       dispatch(setNotificationsCount(notificationsCount+1))
+      })
+      .catch((err) => console.log('Notification listener error: ', err))
+
+    // optional cleanup
+    // return () => unsubscribe()
+  }, [dispatch])
+
+
+
   return (
     <ThemeProvider>
       <BrowserRouter basename="/">
