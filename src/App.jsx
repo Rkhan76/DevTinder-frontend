@@ -1,11 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Body from './components/Body'
-import Login from './components/Login'
+import Login from './components/authComponents/Login'
 import Profile from './components/Profile'
-import ProtectedRoute from './components/ProtectedRoutes'
+import ProtectedRoute from './components/authComponents/ProtectedRoutes'
 import RedirectBasedOnAuth from './components/RedirectBasedOnAuth'
-import Signup from './components/Signup'
+import Signup from './components/authComponents/Signup'
 import { ThemeProvider } from './ThemeContext'
 import Home from './components/Home'
 import ChatApp from './components/ChatApp'
@@ -22,6 +22,7 @@ import {
   setNotificationsCount,
   setFriendRequestsCount,
 } from './redux/slices/activityCountsSlice'
+import SettingsPage from './components/Setting'
 
 function App() {
   const dispatch = useDispatch()
@@ -70,6 +71,14 @@ function App() {
                   <Home />
                 </ProtectedRoute>
               }
+            />
+            <Route
+            path='/setting'
+            element={
+              <ProtectedRoute>
+                <SettingsPage/>
+              </ProtectedRoute>
+            }
             />
             <Route
               path="/profile/:id"

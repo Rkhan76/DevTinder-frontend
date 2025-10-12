@@ -1,11 +1,11 @@
 import { useGoogleLogin } from '@react-oauth/google'
-import { signInWithGoogle } from '../api/authApi'
+import { signInWithGoogle } from '../../api/authApi'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie' // Make sure you import this
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { setUser } from '../redux/slices/authSlice'
+import { setUser } from '../../redux/slices/authSlice'
 
 const LoginWithGoogle = () => {
   const [loading, setLoading] = useState(false)
@@ -26,6 +26,7 @@ const LoginWithGoogle = () => {
           toast.error('Something went wrong')
         }
       } catch (error) {
+        console.log(error, " erro while in the google authentication")
         setLoading(false)
         toast.error('Login failed')
       }

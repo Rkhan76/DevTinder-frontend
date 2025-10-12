@@ -337,14 +337,14 @@ const Navbar = () => {
                       </span>
                     </Link>
 
-                    <button className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 rounded-xl transition-colors group">
+                    <Link to="/setting" className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 rounded-xl transition-colors group">
                       <span className="font-medium text-gray-700">
                         Settings
                       </span>
                       <span className="text-gray-400 group-hover:text-gray-600">
                         ⚙️
                       </span>
-                    </button>
+                    </Link>
 
                     <div className="h-px bg-gray-200 my-2" />
 

@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
-import PostCard from './PostCard'
+import PostCard from './PostCardComponents/PostCard'
 import ProfileButton from './ProfileButton'
 
 export const FromScratch = ({ posts, fetchData, loading, error }) => {

@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { isAuthenticated } from '../api/authApi'
+import { isAuthenticated } from '../../api/authApi'
 
 const ProtectedRoute = ({ children }) => {
   const [loading, setLoading] = useState(true)

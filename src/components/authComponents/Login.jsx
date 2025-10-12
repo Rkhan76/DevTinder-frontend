@@ -1,41 +1,39 @@
-import axios from 'axios'
 import { useState } from 'react'
-import toast from 'react-hot-toast'
-import { userLogin, userSignup } from '../api/authApi'
+import { userLogin } from '../../api/authApi'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import LoginWithGoogle from './LoginWithGoogle'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../../redux/slices/authSlice'
 
-const Signup = () => {
-  const [fullName, setFullName] = useState('')
-  const [emailId, setEmailId] = useState('')
-  const [password, setPassword] = useState('')
+const Login = () => {
+  const [emailId, setEmailId] = useState('john@example.com')
+  const [password, setPassword] = useState('Password@123')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
-  const handleSignup = async () => {
-    // Validate required fields
-    if (!fullName.trim()) {
-      toast.error('Full name is required!')
-      return
-    }
-    if (!emailId.trim()) {
-      toast.error('Email is required!')
-      return
-    }
-    if (!password.trim()) {
-      toast.error('Password is required!')
+  const handleLogin = async () => {
+    if (!emailId || !password) {
+      toast.error('Please fill in all fields')
       return
     }
 
-    setLoading(true)
     try {
-      const res = await userSignup(fullName, emailId, password)
+      setLoading(true)
+      const res = await userLogin(emailId, password)
+      const userData = res.data.user
+
       if (res.success) {
-        toast.success('Signup Successful!')
-        navigate('/login')
+        dispatch(setUser(userData))
+        toast.success('Login Successful!')
+        navigate('/home')
       }
     } catch (error) {
-      toast.error('Something went wrong!')
+      toast.error(
+        error.response?.data?.message || 'Login failed. Please try again.'
+      )
+      console.error('Login error:', error)
     } finally {
       setLoading(false)
     }
@@ -49,17 +47,17 @@ const Signup = () => {
           className="text-white font-extrabold text-4xl md:text-5xl text-left drop-shadow-lg select-none"
           style={{ textShadow: '4px 4px 0 #5a8fd6' }}
         >
-          Join an
+          Welcome Back to
           <br />
-          Exciting Social
+          Your Social
           <br />
-          Experience.
+          Community.
         </div>
       </div>
+
       {/* Center logo overlapping split */}
       <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
         <div className="rounded-full border-8 border-white bg-[#86B6F6] w-32 h-32 flex items-center justify-center shadow-xl">
-          {/* Replace with your SVG logo if available */}
           <svg
             width="60"
             height="60"
@@ -72,6 +70,7 @@ const Signup = () => {
           </svg>
         </div>
       </div>
+
       {/* Right side: Login form */}
       <div className="md:w-1/2 w-full flex flex-col justify-center items-center bg-white relative p-8 min-h-[400px]">
         <div className="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg p-10 flex flex-col items-center">
@@ -95,18 +94,9 @@ const Signup = () => {
               </svg>
             </span>
           </div>
+
           {/* Form */}
           <div className="w-full space-y-4">
-            <div>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300 text-lg"
-                placeholder="Full Name"
-                required
-              />
-            </div>
             <div>
               <input
                 type="email"
@@ -125,12 +115,17 @@ const Signup = () => {
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300 text-lg"
                 placeholder="••••••••"
                 required
+                minLength={6}
               />
             </div>
+
             {loading ? (
-              <button className="w-full py-3 rounded-lg bg-[#4576C7] text-white font-semibold text-lg shadow hover:bg-[#335fa3] transition flex items-center justify-center">
+              <button
+                disabled
+                className="w-full py-3 rounded-lg bg-[#4576C7] text-white font-semibold text-lg shadow flex items-center justify-center"
+              >
                 <svg
-                  className="animate-spin -ml-1 mr-2 h-5 w-5"
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -149,25 +144,48 @@ const Signup = () => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                Creating Account...
+                Signing In...
               </button>
             ) : (
               <button
-                onClick={handleSignup}
+                onClick={handleLogin}
                 className="w-full py-3 rounded-lg bg-[#4576C7] text-white font-semibold text-lg shadow hover:bg-[#335fa3] transition"
               >
-                Sign Up
+                Login
               </button>
             )}
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-white px-4 text-gray-500 text-sm">
+                  OR CONTINUE WITH
+                </span>
+              </div>
+            </div>
+
             <LoginWithGoogle />
-            <div className="text-center mt-6">
-              <p className="text-gray-600">
-                Already have an account?{' '}
+
+            <div className="text-center mt-4">
+              <Link
+                to="/forgot-password"
+                className="text-[#4576C7] hover:underline font-medium"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
+            {/* Professional "Don't have an account" section */}
+            <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
+              <p className="text-gray-700">
+                Don't have an account?{' '}
                 <Link
-                  to="/login"
-                  className="font-medium text-[#86b6f6] hover:text-primary/80 hover:underline transition-colors"
+                  to="/signup"
+                  className="font-semibold text-[#4576C7] hover:underline transition-colors"
                 >
-                  Login
+                  Sign up
                 </Link>
               </p>
             </div>
@@ -178,4 +196,4 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default Login

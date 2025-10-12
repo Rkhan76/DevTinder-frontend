@@ -1,28 +1,29 @@
-import { useRef, useState, useEffect } from 'react'
-import toast from 'react-hot-toast'
-import { addCommentToPost, onLikePost, repostPost } from '../api/postApi'
-import { getAvatarColor, getInitials } from '../utils/userAvtar'
+import { useRef, useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import { addCommentToPost, onLikePost, repostPost } from "../../api/postApi";
+import { getAvatarColor, getInitials } from "../../utils/userAvtar";
 import {
   FaRegCommentDots,
   FaRetweet,
   FaHeart,
   FaRegHeart,
   FaExpandAlt,
-} from 'react-icons/fa'
-import { IoIosShareAlt } from 'react-icons/io'
-import { useSelector } from 'react-redux'
-import { timeAgo } from '../utils/timeformat'
-import { Link } from 'react-router-dom'
+} from "react-icons/fa";
+import { IoIosShareAlt } from "react-icons/io";
+import { useSelector } from "react-redux";
+import { timeAgo } from "../../utils/timeformat";
+import { Link } from "react-router-dom";
 import {
   createSocket,
   joinPostRoom,
   leavePostRoom,
   subscribeToComments,
-} from '../utils/socket'
+} from "../../utils/socket";
+import PostActionMenu from "./PostActionMenu";
 
 const PostCard = ({ post }) => {
   const buttonClasses =
-    'flex-1 flex items-center justify-center gap-2 p-3 hover:bg-gray-50 rounded-lg transition-all duration-200 group border-0 bg-transparent'
+    "flex-1 flex items-center justify-center gap-2 p-3 hover:bg-gray-50 rounded-lg transition-all duration-200 group border-0 bg-transparent";
 
   const {
     _id: postId,
@@ -36,88 +37,106 @@ const PostCard = ({ post }) => {
     likedBy = [],
     comments = [],
     author: { fullName, image },
-  } = post
+  } = post;
 
-  const user = useSelector((state) => state.auth.user)
+  const user = useSelector((state) => state.auth.user);
 
   const isLikedbyCurrentUser = () => {
-    return likedBy.some((userLiked) => userLiked._id === user._id)
-  }
+    return likedBy.some((userLiked) => userLiked._id === user._id);
+  };
 
-  const [likeCount, setLikeCount] = useState(likesCount)
-  const [liked, setLiked] = useState(isLikedbyCurrentUser())
-  const [modalOpen, setModalOpen] = useState(false)
-  const [commentModal, setCommentModal] = useState(false)
-  const [commentInputValue, setCommentInputValue] = useState('')
-  const [commentsList, setCommentsList] = useState(comments || [])
-  const textareaRef = useRef(null)
+  const [likeCount, setLikeCount] = useState(likesCount);
+  const [liked, setLiked] = useState(isLikedbyCurrentUser());
+  const [postActionMenuDropdown, setPostActionMenuDropdown] = useState(false);
+  const [commentModal, setCommentModal] = useState(false);
+  const [commentInputValue, setCommentInputValue] = useState("");
+  const [commentsList, setCommentsList] = useState(comments || []);
+  const textareaRef = useRef(null);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // If menu is open and the clicked element is outside the menu
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setPostActionMenuDropdown(false);
+      }
+    };
+
+    // Listen for all clicks
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      // Clean up the listener when component unmounts
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLike = async () => {
     try {
-      const updated = await onLikePost(postId)
-      setLiked(updated.liked)
-      setLikeCount(updated.likesCount)
+      const updated = await onLikePost(postId);
+      setLiked(updated.liked);
+      setLikeCount(updated.likesCount);
     } catch (err) {
-      toast.error('Failed to like')
-      console.error('Failed to like:', err)
+      toast.error("Failed to like");
+      console.error("Failed to like:", err);
     }
-  }
+  };
 
   const handleShare = () => {
     // Share functionality placeholder
-  }
+  };
 
   // handle repost
   const handleRepost = async () => {
-    const res = await repostPost(postId)
-    console.log('Post reposted:', res)
-  }
+    const res = await repostPost(postId);
+    console.log("Post reposted:", res);
+  };
 
   // Handle comments
   const handleFetchMoreComments = () => {
-    console.log('Fetching more comments...')
-  }
+    console.log("Fetching more comments...");
+  };
 
   const handleCommentInput = (e) => {
-    setCommentInputValue(e.target.value)
-    textareaRef.current.style.height = 'auto'
-    textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
-  }
+    setCommentInputValue(e.target.value);
+    textareaRef.current.style.height = "auto";
+    textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+  };
 
-useEffect(() => {
-  if (!postId || !user?._id) return
+  useEffect(() => {
+    if (!postId || !user?._id) return;
 
-  const socket = createSocket(user.token)
-  joinPostRoom(postId)
+    const socket = createSocket(user.token);
+    joinPostRoom(postId);
 
-  subscribeToComments((newComment) => {
-    if (newComment.postId === postId) {
-      setCommentsList((prev) => [newComment, ...prev])
-    }
-  })
+    subscribeToComments((newComment) => {
+      if (newComment.postId === postId) {
+        setCommentsList((prev) => [newComment, ...prev]);
+      }
+    });
 
-  return () => {
-    leavePostRoom(postId)
-    socket.off('receive_comment')
-  }
-}, [postId, user])
+    return () => {
+      leavePostRoom(postId);
+      socket.off("receive_comment");
+    };
+  }, [postId, user]);
 
   const handleAddComment = async () => {
     try {
-      const res = await addCommentToPost(postId, commentInputValue)
+      const res = await addCommentToPost(postId, commentInputValue);
       if (res.success) {
-        setCommentsList((prev) => [res.comment, ...prev])
-        setCommentInputValue('')
-        textareaRef.current.style.height = 'auto'
+        setCommentsList((prev) => [res.comment, ...prev]);
+        setCommentInputValue("");
+        textareaRef.current.style.height = "auto";
       }
     } catch (err) {
-      toast.error('Failed to add comment')
-      console.error(err)
+      toast.error("Failed to add comment");
+      console.error(err);
     }
-  }
+  };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 mb-6 border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 mb-6 border border-gray-100 ">
       {/* Header */}
       <div className="flex justify-between items-center p-6 pb-4">
         <Link
@@ -151,14 +170,18 @@ useEffect(() => {
             </p>
           </div>
         </Link>
-        <button
-          onClick={() => setModalOpen(true)}
-          className="p-2 rounded-full hover:bg-gray-100 transition-all duration-200 group border-0 bg-transparent"
-        >
-          <span className="text-xl text-gray-400 group-hover:text-gray-600 font-bold transform group-hover:rotate-90 transition-all duration-300">
-            ⋮
-          </span>
-        </button>
+        <div ref={menuRef} className="relative">
+          <button
+            onClick={() => setPostActionMenuDropdown((prev) => !prev)}
+            className="relative p-2 rounded-full hover:bg-gray-100 transition-all duration-200 group border-0 bg-transparent"
+          >
+            <span className="text-xl text-gray-400 group-hover:text-gray-600 font-bold transform group-hover:rotate-90 transition-all duration-300">
+              ⋮
+            </span>
+          </button>
+
+          {postActionMenuDropdown && <PostActionMenu isOwner={user._id === post.author._id}/>}
+        </div>
       </div>
 
       {/* Content */}
@@ -184,7 +207,7 @@ useEffect(() => {
       {media[0]?.url && (
         <div className="relative overflow-hidden mt-4 border-t border-gray-100">
           <img
-            src={media[0].url || '/placeholder.svg'}
+            src={media[0].url || "/placeholder.svg"}
             alt="Post content"
             className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
           />
@@ -201,7 +224,7 @@ useEffect(() => {
               .map((liker, index) => (
                 <img
                   key={index}
-                  src={liker.image || '/placeholder.svg'}
+                  src={liker.image || "/placeholder.svg"}
                   alt={liker.fullName}
                   className="w-7 h-7 rounded-full border-2 border-white object-cover shadow-sm hover:scale-110 transition-transform duration-200"
                 />
@@ -209,7 +232,7 @@ useEffect(() => {
           </div>
           {likeCount > 0 && (
             <span className="text-sm text-gray-600 font-medium">
-              {likeCount} {likeCount === 1 ? 'like' : 'likes'}
+              {likeCount} {likeCount === 1 ? "like" : "likes"}
             </span>
           )}
         </div>
@@ -225,8 +248,8 @@ useEffect(() => {
             <span
               className={`text-sm font-medium ${
                 liked
-                  ? 'text-red-500'
-                  : 'text-gray-600 group-hover:text-red-500'
+                  ? "text-red-500"
+                  : "text-gray-600 group-hover:text-red-500"
               } transition-colors duration-200`}
             >
               {likeCount}
@@ -261,7 +284,7 @@ useEffect(() => {
               {user?.image ? (
                 <img
                   alt="User avatar"
-                  src={user.image || '/placeholder.svg'}
+                  src={user.image || "/placeholder.svg"}
                   className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-100"
                 />
               ) : (
@@ -306,7 +329,7 @@ useEffect(() => {
                     {comment.user?.image ? (
                       <img
                         alt="User avatar"
-                        src={comment.user.image || '/placeholder.svg'}
+                        src={comment.user.image || "/placeholder.svg"}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -358,7 +381,7 @@ useEffect(() => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default PostCard
+export default PostCard;

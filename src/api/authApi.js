@@ -4,36 +4,27 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const userLogin = async (email, password) => {
   const api = `${BASE_URL}/auth/login`
-  try {
-    const response = await axios.post(api, { email, password })
-    return response.data
-  } catch (error) {
-    throw error
-  }
+  const response = await axios.post(api, { email, password })
+  return response.data
 }
 
 export const userSignup = async (fullName, emailId, password) => {
   const api = `${BASE_URL}/auth/register`
-  try {
+ 
     const response = await axios.post(api, {
       fullName,
       email: emailId,
       password,
     })
     return response.data
-  } catch (error) {
-    throw error
-  }
 }
 
 export const signInWithGoogle = async (code) => {
   const api = `${BASE_URL}/auth/google`
-  try {
-    const response = await axios.post(api, { code })
-    return response.data
-  } catch (error) {
-    throw error
-  }
+  const response = await axios.post(api, { code })
+  console.log(response, " response in the signInWith google api")
+  return response.data
+  
 }
 
 export const isAuthenticated = async () => {
@@ -47,12 +38,8 @@ export const isAuthenticated = async () => {
 
 export const userLogout = async () => {
   const api = `${BASE_URL}/auth/logout`
-  try {
     const response = await axios.get(api)
     return response.data
-  } catch (error) {
-    throw error
-  }
 }
 
 // Fetch all users (for chat sidebar)
