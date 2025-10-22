@@ -12,7 +12,7 @@ export default function MessageInput({ onSend, onTyping }) {
     <div className="flex items-center px-6 py-4 bg-white border-t">
       <input
         type="text"
-        className="flex-1 border rounded-full px-4 py-2 mr-2 focus:outline-none focus:ring"
+        className="flex-1 border rounded-full px-4 py-2 mr-2 focus:outline-none focus:ring text-black"
         placeholder="Type your message..."
         value={text}
         onChange={(e) => {

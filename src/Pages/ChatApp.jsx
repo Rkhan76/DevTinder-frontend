@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux'
 import { fetchChatHistory } from '../api/chatApi'
 import { createSocket } from '../utils/socket'
 import { fetchAllUsers } from '../api/authApi'
-import Sidebar from './chatPageComponents/Sidebar'
-import ChatWindow from './chatPageComponents/ChatWindow'
-import UserDetails from './chatPageComponents/UserDetails'
+import Sidebar from '../components/chatPageComponents/Sidebar'
+import ChatWindow from '../components/chatPageComponents/ChatWindow'
+import UserDetails from '../components/chatPageComponents/UserDetails'
 
 export default function ChatApp() {
   const currentUser = useSelector((state) => state.auth.user)
@@ -144,13 +144,15 @@ export default function ChatApp() {
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="flex h-[calc(100vh-9vh)] bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex-shrink-0 overflow-y-auto">
       <Sidebar
         users={users}
         onlineUsers={onlineUsers}
         selectedUser={selectedUser}
         onSelectUser={setSelectedUser}
       />
+      </div>
       <ChatWindow
         onlineUsers={onlineUsers}
         messages={messages}

@@ -13,9 +13,9 @@ export default function ChatWindow({
   onlineUsers,
 }) {
   return (
-    <div className="flex flex-col flex-1 bg-white rounded-lg overflow-hidden shadow-lg mx-2 my-2">
+    <div className="flex flex-col h-[91vh] flex-1 bg-white rounded-lg overflow-hidden shadow-lg">
       {/* Header */}
-      <div className="flex items-center gap-4 px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+      <div className="flex-shrink-0 flex items-center gap-4 px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
         <div className="relative">
           {selectedUser?.image ? (
             <img
@@ -58,7 +58,7 @@ export default function ChatWindow({
       </div>
 
       {/* Message list */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 bg-gray-50">
+      <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4 bg-gray-50">
         <MessageList
           messages={messages}
           users={users}
@@ -83,7 +83,7 @@ export default function ChatWindow({
       </div>
 
       {/* Message input */}
-      <div className="border-t border-gray-200 px-6 py-4 bg-white">
+      <div className="flex-shrink-0 border-t border-gray-200 px-6 py-4 bg-white">
         <MessageInput onSend={onSendMessage} onTyping={onTyping} />
       </div>
     </div>

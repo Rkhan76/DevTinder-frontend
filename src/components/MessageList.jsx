@@ -9,7 +9,7 @@ export default function MessageList({ messages, users, currentUser }) {
 
 
   return (
-    <div ref={ref} className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-100">
+    <div ref={ref} className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50">
       {messages.map((msg) => (
         <MessageItem
           key={msg._id}

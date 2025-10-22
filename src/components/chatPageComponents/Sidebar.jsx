@@ -8,7 +8,7 @@ export default function Sidebar({
   onSelectUser,
 }) {
   return (
-    <div className="w-20 bg-white flex flex-col items-center py-6 border-r border-gray-200 shadow-sm">
+    <div className="w-20 bg-white flex flex-col items-center py-6 border-r border-gray-200 shadow-sm" >
       {users.map((user) => (
         <button
           key={user?._id}

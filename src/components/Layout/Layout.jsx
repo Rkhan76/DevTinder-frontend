@@ -1,7 +1,7 @@
-import Navbar from './Navbar'
+import Navbar from '../Navbar'
 import { Outlet } from 'react-router-dom'
 
-const Body = () => {
+export default function Layout()  {
   return (
     <div className="flex flex-col h-screen bg-[#f4f4f4]">
       <Navbar />
@@ -11,5 +11,3 @@ const Body = () => {
     </div>
   )
 }
-
-export default Body

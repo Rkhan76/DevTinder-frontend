@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
-import Body from './components/Body'
+// import Body from './components/Body'
 import Login from './components/authComponents/Login'
 import Profile from './components/Profile'
 import ProtectedRoute from './components/authComponents/ProtectedRoutes'
@@ -8,7 +8,7 @@ import RedirectBasedOnAuth from './components/RedirectBasedOnAuth'
 import Signup from './components/authComponents/Signup'
 import { ThemeProvider } from './ThemeContext'
 import Home from './components/Home'
-import ChatApp from './components/ChatApp'
+import ChatApp from './Pages/ChatApp'
 import NotFound from './components/NotFound'
 import SearchResults from './components/SearchResults'
 import Notifications from './components/Notifications'
@@ -23,6 +23,7 @@ import {
   setFriendRequestsCount,
 } from './redux/slices/activityCountsSlice'
 import SettingsPage from './components/Setting'
+import Layout from './components/Layout/Layout'
 
 function App() {
   const dispatch = useDispatch()
@@ -44,25 +45,22 @@ function App() {
     onMessageListener()
       .then((payload) => {
         console.log('Foreground notification received:', payload)
-        // Instead of alert, increase count in Redux
-       dispatch(setNotificationsCount(notificationsCount+1))
+        dispatch(setNotificationsCount(notificationsCount + 1))
       })
       .catch((err) => console.log('Notification listener error: ', err))
-
-    // optional cleanup
-    // return () => unsubscribe()
   }, [dispatch])
-
-
 
   return (
     <ThemeProvider>
       <BrowserRouter basename="/">
         <Routes>
+          {/* Routes without navbar/layout */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="*" element={<NotFound />} />
 
-          <Route path="/" element={<Body />}>
+          {/* Routes with navbar/layout (using Body as layout) */}
+          <Route path="/" element={<Layout />}>
             <Route index element={<RedirectBasedOnAuth />} />
             <Route
               path="/home"
@@ -73,12 +71,12 @@ function App() {
               }
             />
             <Route
-            path='/setting'
-            element={
-              <ProtectedRoute>
-                <SettingsPage/>
-              </ProtectedRoute>
-            }
+              path="/setting"
+              element={
+                <ProtectedRoute>
+                  <SettingsPage />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/profile/:id"
@@ -112,23 +110,23 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/mynetwork/grow" element=
-            {
-              <ProtectedRoute>
-                <MyNetwork/>
-              </ProtectedRoute>
-            }
+            <Route 
+              path="/mynetwork/grow" 
+              element={
+                <ProtectedRoute>
+                  <MyNetwork />
+                </ProtectedRoute>
+              }
             /> 
             <Route
               path="/notifications"
               element={
                 <ProtectedRoute>
-                  <Notifications/>
+                  <Notifications />
                 </ProtectedRoute>
               }
             />
           </Route>
-          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-center" reverseOrder={false} />
