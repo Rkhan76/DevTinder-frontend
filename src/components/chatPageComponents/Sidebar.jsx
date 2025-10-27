@@ -7,6 +7,8 @@ export default function Sidebar({
   selectedUser,
   onSelectUser,
 }) {
+
+  console.log(onlineUsers, " online users ");
   return (
     <div className="w-20 bg-white flex flex-col items-center py-6 border-r border-gray-200 shadow-sm" >
       {users.map((user) => (

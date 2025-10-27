@@ -35,6 +35,7 @@ export default function ChatApp() {
   // Connect socket and join room
   useEffect(() => {
     if (!currentUser) return
+    console.log("current user on chatapp ", currentUser._id);
     socketRef.current = createSocket(currentUser.token)
     socketRef.current.emit('join', currentUser._id)
 
