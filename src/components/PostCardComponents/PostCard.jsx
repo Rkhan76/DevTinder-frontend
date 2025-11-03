@@ -20,6 +20,7 @@ import {
   subscribeToComments,
 } from "../../utils/socket";
 import PostActionMenu from "./PostActionMenu";
+import ReadMoreText from "../Reusable-Ui/ReadMoreText";
 
 const PostCard = ({ post }) => {
   const buttonClasses =
@@ -186,10 +187,10 @@ const PostCard = ({ post }) => {
 
       {/* Content */}
       <div className="px-6 py-2">
-        <p className="text-base leading-relaxed text-gray-800 m-0 break-words font-normal">
-          {content}
-        </p>
-        {tags && tags.length > 0 && (
+        <div className="text-base leading-relaxed text-gray-800 m-0 break-words font-normal">
+          <ReadMoreText text={content}/>
+        </div>
+        {/* {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-4">
             {tags.map((tag, index) => (
               <span
@@ -200,7 +201,7 @@ const PostCard = ({ post }) => {
               </span>
             ))}
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Media */}

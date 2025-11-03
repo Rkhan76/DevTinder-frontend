@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react'
 import { IoMdImages } from 'react-icons/io'
-import { addPost } from '../api/postApi'
+import { addPost } from '../../api/postApi'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
-import { getAvatarColor, getInitials } from '../utils/userAvtar'
+import { getAvatarColor, getInitials } from '../../utils/userAvtar'
+
 
 const CreatePost = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -14,7 +15,6 @@ const CreatePost = () => {
   const fileInputRef = useRef(null)
   const user = useSelector((state) => state.auth.user)
 
-  console.log(user, ' user details in current login')
 
   const WORD_LIMIT = 300
   const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0
@@ -52,7 +52,7 @@ const CreatePost = () => {
     const formData = new FormData()
     formData.append('content', content)
     if (image) {
-      formData.append('media', image) // key must match multer field name
+      formData.append('media', image) 
     }
 
     try {

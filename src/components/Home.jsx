@@ -1,4 +1,4 @@
-import CreatePost from "./CreatePost";
+import CreatePost from "./homePageComponents/CreatePost";
 import Feed from "./Feed";
 import NetworkActivity from "./homePageComponents/NetworkAcitivity";
 import QuickStats from "./homePageComponents/QuickStats";
