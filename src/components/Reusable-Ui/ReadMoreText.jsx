@@ -24,7 +24,7 @@ const ReadMoreText = ({ text, maxLength = 100 }) => {
           <span>...</span>
           <button
             onClick={() => setIsExpanded(true)}
-            className="text-blue-600 font-medium ml-1 hover:underline"
+            className="text-gray-600 ml-1 hover:underline"
           >
             See more
           </button>
