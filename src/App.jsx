@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 // import Body from './components/Body'
 import Login from './components/authComponents/Login'
-import Profile from './components/Profile'
+import Profile from './Pages/Profile'
 import ProtectedRoute from './components/authComponents/ProtectedRoutes'
 import RedirectBasedOnAuth from './components/RedirectBasedOnAuth'
 import Signup from './components/authComponents/Signup'
@@ -23,7 +23,7 @@ import {
   setFriendRequestsCount,
 } from './redux/slices/activityCountsSlice'
 import SettingsPage from './components/Setting'
-import Layout from './components/Layout/Layout'
+import Layout from './Layout/Layout'
 
 function App() {
   const dispatch = useDispatch()
