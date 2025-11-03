@@ -11,6 +11,7 @@ const AboutSection = ({
   isEditModalOpen,
   setIsEditModalOpen,
 }) => {
+
   const [tempFormData, setTempFormData] = useState(profileData)
 
   const handleEditProfile = () => {
@@ -19,8 +20,7 @@ const AboutSection = ({
   }
 
   const handleSaveProfile = async() => {
-    const updatedAboutData = await handleupdateAboutSection(tempFormData)
-    console.log('Updated About Data:', updatedAboutData)
+    await handleupdateAboutSection(tempFormData)
     setProfileData(tempFormData)
     setIsEditModalOpen(false)
     toast.success("Profile updated successfully!")
@@ -73,6 +73,7 @@ const AboutSection = ({
             { label: "Location", value: profileData.location, icon: "📍" },
             { label: "Skills", value: profileData.skills, icon: "🛠️", span: true },
             { label: "Interests", value: profileData.interests, icon: "🎯", span: true },
+            { label: "Headline", value: profileData.headline, icon: "🔧" },
           ].map((item, index) => (
             <div
               key={index}
@@ -108,7 +109,7 @@ const AboutSection = ({
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 text-black">
               {/* Bio Field */}
               <div className="bg-base-200/50 p-4 rounded-xl">
                 <label className="block mb-3">
@@ -141,6 +142,7 @@ const AboutSection = ({
                 },
                 { key: "experience", label: "Experience", icon: "⏱️", placeholder: "e.g. 3+ years in web development" },
                 { key: "location", label: "Location", icon: "📍", placeholder: "e.g. San Francisco, CA" },
+                { key: "headline", label: "Headline", icon: "🔧", placeholder: "reactJs | nextJs | node" },
                 {
                   key: "education",
                   label: "Education",

@@ -11,6 +11,7 @@ const ProfileHeader = ({
   handleAcceptFriendRequest,
   handleRejectFriendRequest,
 }) => {
+
   return (
     <>
       {/* Cover Image Section */}
@@ -161,7 +162,7 @@ const ProfileHeader = ({
             {displayUser?.fullName || 'User Name'}
           </h1>
           <p className="text-xl text-base-content/70 mb-4">
-            {displayUser?.profession || 'Professional'}
+            {displayUser?.headline || ''}
           </p>
           <p className="text-base-content/60 mb-6">
             📍 {displayUser?.location} • Joined {displayUser?.joinedDate}

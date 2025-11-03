@@ -243,6 +243,12 @@ const Profile = () => {
                 ? 'Enter your location (e.g., Bangalore, India)'
                 : 'Not provided',
 
+              headline: userData.headline
+                ? userData.headline
+                : isOwnProfile
+                ? 'Enter the headline you want to show to other users (e.g., reactJs | nextJs | Docker)'
+                : 'Not provided',
+
               interests: userData.interests?.length
                 ? userData.interests
                 : isOwnProfile
