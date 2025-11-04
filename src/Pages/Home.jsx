@@ -1,9 +1,9 @@
-import CreatePost from "./homePageComponents/CreatePost";
-import Feed from "./Feed";
-import NetworkActivity from "./homePageComponents/NetworkAcitivity";
-import QuickStats from "./homePageComponents/QuickStats";
-import SuggestedFriends from "./homePageComponents/SuggestedFriends";
-import TrendingTopics from "./homePageComponents/TrendingTopics";
+import CreatePost from "../components/homePageComponents/CreatePost";
+import Feed from "../components/PostCardComponents/Feed";
+import NetworkActivity from "../components/homePageComponents/NetworkAcitivity";
+import QuickStats from "../components/homePageComponents/QuickStats"
+import SuggestedFriends from "../components/homePageComponents/SuggestedFriends";
+import TrendingTopics from "../components/homePageComponents/TrendingTopics";
 
 const Home = () => {
   return (
@@ -16,7 +16,7 @@ const Home = () => {
                 {" "}
                 {/* Changed from top-24 to top-6 for earlier sticking */}
                 <div className="space-y-6">
-                  <QuickStats />
+                  <QuickStats/>
                   <TrendingTopics />
                 </div>
               </div>

@@ -37,7 +37,7 @@ const PostCard = ({ post }) => {
     media,
     likedBy = [],
     comments = [],
-    author: { fullName, image },
+    author: { fullName, image, headline },
   } = post;
 
   const user = useSelector((state) => state.auth.user);
@@ -163,12 +163,16 @@ const PostCard = ({ post }) => {
             </div>
           )}
           <div className="flex flex-col">
-            <h3 className="text-lg font-semibold text-gray-900 leading-tight m-0 hover:text-blue-600 transition-colors duration-200 cursor-pointer">
+            <h3 className="text-lg font-normal text-gray-900 leading-tight m-0 hover:text-blue-600 transition-colors duration-200 cursor-pointer">
               {fullName}
             </h3>
-            <p className="text-sm text-gray-500 leading-tight m-0 font-medium">
+            <p className="text-[13px] text-gray-700 leading-tight m-0 font-light">
+              {headline || ""}
+            </p>
+            <p className="text-[10px] text-gray-700 leading-tight m-0">
               {timeAgo(new Date(createdAt))}
             </p>
+            
           </div>
         </Link>
         <div ref={menuRef} className="relative">

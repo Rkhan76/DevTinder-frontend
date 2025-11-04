@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
-import { FromScratch } from './FromScratch'
-import { fetchAllPosts } from '../api/postApi'
+import { FromScratch } from '../FromScratch'
+import { fetchAllPosts } from '../../api/postApi'
 
 const Feed = () => {
   const [posts, setPosts] = useState([])

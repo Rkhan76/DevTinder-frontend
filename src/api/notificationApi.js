@@ -5,10 +5,9 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const saveFcmToken = async (token) => {
   const api = `${BASE_URL}/notifications/save-fcm-token`
-  console.log(token, " token has reacht to hit api folder")
+  
   try {
     const res = await axios.post(api,{token})
-    console.log(res, " response from the backend on saving token")
     return res.data
   } catch (err) {
     console.error('Error saving FCM token:', err)
@@ -22,7 +21,6 @@ export const fetchNotifications = async () => {
 
   try {
     const response = await axios.get(api)
-    console.log("response in fetchnotification ", response)
     return response.data 
   } catch (error) {
     console.error(
@@ -36,7 +34,6 @@ export const fetchNotifications = async () => {
 // ✅ Mark a single notification as read
 export const markNotificationAsRead = async (notificationId) => {
   const api = `${BASE_URL}/notifications/mark-as-read/${notificationId}`
-  console.log(api, " request has reached here")
   try {
     const response = await axios.patch(api)
     return response.data
@@ -61,7 +58,6 @@ export const markAllNotificationsAsRead = async (userId) => {
 // ✅ Delete a notification
 export const deleteNotification = async (notificationId) => {
   const api = `${BASE_URL}/notifications/delete/${notificationId}`
-  console.log("request has reached on delete api")
   try {
     const response = await axios.delete(api)
     return response.data

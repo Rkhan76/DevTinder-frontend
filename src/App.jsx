@@ -7,7 +7,7 @@ import ProtectedRoute from './components/authComponents/ProtectedRoutes'
 import RedirectBasedOnAuth from './components/RedirectBasedOnAuth'
 import Signup from './components/authComponents/Signup'
 import { ThemeProvider } from './ThemeContext'
-import Home from './components/Home'
+import Home from './Pages/Home'
 import ChatApp from './Pages/ChatApp'
 import NotFound from './components/NotFound'
 import SearchResults from './components/SearchResults'
@@ -35,7 +35,6 @@ function App() {
     const setupFCM = async () => {
       const token = await requestForToken()
       if (token) {
-        console.log('FCM Token from frontend:', token)
         await saveFcmToken(token)
       }
     }
