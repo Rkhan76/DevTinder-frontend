@@ -348,7 +348,7 @@ const PostCard = ({ post }) => {
                     )}
                   </div>
                   <div className="flex-1">
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-start">
                       <div className="flex items-center gap-3">
                         <h3 className="text-sm font-semibold text-gray-900">
                           {comment.user?.fullName}
@@ -363,6 +363,9 @@ const PostCard = ({ post }) => {
                         </span>
                       </button>
                     </div>
+                    <p className="text-xs text-gray-500 font-medium">
+                          {comment.user?.headline}
+                    </p>
                     <div className="text-sm text-gray-800 break-words whitespace-pre-wrap leading-relaxed">
                       {comment.text}
                     </div>
