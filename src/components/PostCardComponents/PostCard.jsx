@@ -21,6 +21,7 @@ import {
 } from "../../utils/socket";
 import PostActionMenu from "./PostActionMenu";
 import ReadMoreText from "../Reusable-Ui/ReadMoreText";
+import RepostModal from "./RepostModal";
 
 const PostCard = ({ post }) => {
   const buttonClasses =
@@ -50,6 +51,7 @@ const PostCard = ({ post }) => {
   const [liked, setLiked] = useState(isLikedbyCurrentUser());
   const [postActionMenuDropdown, setPostActionMenuDropdown] = useState(false);
   const [commentModal, setCommentModal] = useState(false);
+  const [openRepostModal, setOpenRepostModal] = useState(false);
   const [commentInputValue, setCommentInputValue] = useState("");
   const [commentsList, setCommentsList] = useState(comments || []);
   const textareaRef = useRef(null);
@@ -87,11 +89,8 @@ const PostCard = ({ post }) => {
     // Share functionality placeholder
   };
 
-  // handle repost
-  const handleRepost = async () => {
-    const res = await repostPost(postId);
-    console.log("Post reposted:", res);
-  };
+
+
 
   // Handle comments
   const handleFetchMoreComments = () => {
@@ -172,7 +171,6 @@ const PostCard = ({ post }) => {
             <p className="text-[10px] text-gray-700 leading-tight m-0">
               {timeAgo(new Date(createdAt))}
             </p>
-            
           </div>
         </Link>
         <div ref={menuRef} className="relative">
@@ -185,14 +183,16 @@ const PostCard = ({ post }) => {
             </span>
           </button>
 
-          {postActionMenuDropdown && <PostActionMenu isOwner={user._id === post.author._id}/>}
+          {postActionMenuDropdown && (
+            <PostActionMenu isOwner={user._id === post.author._id} />
+          )}
         </div>
       </div>
 
       {/* Content */}
       <div className="px-6 py-2">
         <div className="text-base leading-relaxed text-gray-800 m-0 break-words font-normal">
-          <ReadMoreText text={content}/>
+          <ReadMoreText text={content} />
         </div>
         {/* {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-4">
@@ -269,7 +269,10 @@ const PostCard = ({ post }) => {
               {commentsList.length}
             </span>
           </button>
-          <button className={buttonClasses} onClick={handleRepost}>
+          <button
+            className={buttonClasses}
+            onClick={() => setOpenRepostModal(true)}
+          >
             <FaRetweet className="w-5 h-5 text-gray-500 group-hover:text-green-500 group-hover:scale-110 transition-all duration-200" />
             <span className="text-sm font-medium text-gray-600 group-hover:text-green-500 transition-colors duration-200">
               {sharesCount}
@@ -364,7 +367,7 @@ const PostCard = ({ post }) => {
                       </button>
                     </div>
                     <p className="text-xs text-gray-500 font-medium">
-                          {comment.user?.headline}
+                      {comment.user?.headline}
                     </p>
                     <div className="text-sm text-gray-800 break-words whitespace-pre-wrap leading-relaxed">
                       {comment.text}
@@ -387,6 +390,20 @@ const PostCard = ({ post }) => {
             </button>
           </div>
         </div>
+      )}
+
+      {/* Repost Modal */}
+      {openRepostModal && (
+        <RepostModal
+          isOpen={openRepostModal}
+          onClose={() => setOpenRepostModal(false)}
+          postId={postId}
+          post={{
+            author: fullName,
+            avatar: image,
+            content,
+          }}
+        />
       )}
     </div>
   );
