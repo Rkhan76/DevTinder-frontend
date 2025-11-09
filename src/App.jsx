@@ -24,6 +24,8 @@ import {
 } from './redux/slices/activityCountsSlice'
 import SettingsPage from './components/Setting'
 import Layout from './Layout/Layout'
+import PostCard from './components/PostCardComponents/PostCard'
+import SinglePostPage from './Pages/SinglePost'
 
 function App() {
   const dispatch = useDispatch()
@@ -109,19 +111,28 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route 
-              path="/mynetwork/grow" 
+            <Route
+              path="/mynetwork/grow"
               element={
                 <ProtectedRoute>
                   <MyNetwork />
                 </ProtectedRoute>
               }
-            /> 
+            />
             <Route
               path="/notifications"
               element={
                 <ProtectedRoute>
                   <Notifications />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/post/:postId"
+              element={
+                <ProtectedRoute>
+                  <SinglePostPage/>
                 </ProtectedRoute>
               }
             />

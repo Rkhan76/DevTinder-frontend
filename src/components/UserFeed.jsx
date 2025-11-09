@@ -14,6 +14,7 @@ const UserFeed = ({ userId }) => {
 
       if (res.success) {
         const newData = res?.data
+        console.log(res, " post of user profile")
         setPosts((prev) => [...prev, ...newData])
         setLoading(false)
       }

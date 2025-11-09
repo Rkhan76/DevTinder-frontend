@@ -45,7 +45,6 @@ export const onLikePost = async (postId) => {
 }
 
 export const addCommentToPost = async (postId, commentText) => {
-  console.log(postId, " postId ", commentText, " commentText")
   const api = `${BASE_URL}/post/${postId}/comment`
   try {
     const res = await axios.post(api, { text: commentText })
@@ -67,15 +66,52 @@ export const searchPosts = async (query) => {
 }
 
 // Repost functionality
-export const repostPost = async (postId) => {
+export const repostPost = async (postId, message) => {
+  
   const api = `${BASE_URL}/post/${postId}/repost`
-  console.log('Reposting post with ID:', postId)
+  
   try {
-    const response = await axios.post(api)
-    console.log('Repost successful:', response.data)
+    const response = await axios.post(api, {message})
     return response.data
   } catch (error) {
     console.error('Error reposting post:', error.response?.data || error.message)
     throw error
   }
 }
+
+// Delete its own post by user
+export const deletePost = async (formData) => {
+  const api = `${BASE_URL}/post/add`
+  try {
+    const response = await axios.post(api, formData)
+    return response.data
+  } catch (error) {
+    console.error('Add post failed:', error)
+    throw error
+  }
+}
+
+//fetch one post
+export const getSinglePostById = async (postId) => {
+  console.log(postId, " Post id has reached getSinglePost api")
+  const api = `${BASE_URL}/post/${postId}`
+  try {
+    const response = await axios.get(api)
+
+    console.log(response, ' response data of the single post')
+    
+    // Fixed condition: Remove the extra exclamation mark
+    if (response.status !== 200) {
+      throw new Error(response.data.message || 'Failed to fetch post')
+    }
+
+    console.log('Successfully fetched single post data')
+    return response.data
+  } catch (error) {
+    console.error('Error fetching single post:', error)
+    throw error
+  }
+}
+
+
+

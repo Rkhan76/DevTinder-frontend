@@ -19,7 +19,6 @@ const Feed = () => {
         setError(null)
         const res = await fetchAllPosts(page)
 
-        console.log(res, " res in Feed.jsx")
         // Only update state if the component is still mounted
         const newData = res?.data || []
         if (newData.length === 0) {
