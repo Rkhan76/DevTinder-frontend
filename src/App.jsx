@@ -26,6 +26,7 @@ import SettingsPage from './components/Setting'
 import Layout from './Layout/Layout'
 import PostCard from './components/PostCardComponents/PostCard'
 import SinglePostPage from './Pages/SinglePost'
+import SavedPostsPage from './Pages/SavedPost'
 
 function App() {
   const dispatch = useDispatch()
@@ -112,6 +113,14 @@ function App() {
               }
             />
             <Route
+              path="/my-item/saved-posts"
+              element={
+                <ProtectedRoute>
+                  <SavedPostsPage/>
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/mynetwork/grow"
               element={
                 <ProtectedRoute>
@@ -132,7 +141,7 @@ function App() {
               path="/post/:postId"
               element={
                 <ProtectedRoute>
-                  <SinglePostPage/>
+                  <SinglePostPage />
                 </ProtectedRoute>
               }
             />

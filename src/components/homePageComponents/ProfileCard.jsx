@@ -11,28 +11,17 @@ export default function ProfileCard({
 }) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-4">
-      {/* Skills badges */}
-      <div className="flex gap-3 mb-6">
-        {skills?.map((skill) => (
-          <div
-            key={skill.name}
-            className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${skill.bgColor} ${skill.color}`}
-          >
-            {skill.name.charAt(0).toUpperCase()}
-          </div>
-        ))}
-      </div>
-
+      
       {/* Profile info */}
       <div className="flex gap-4 mb-4">
         <div className="relative">
           <img
             src={profileImage || '/placeholder.svg'}
             alt={name}
-            className="w-20 h-20 object-cover rounded-full border-4 border-green-500"
+            className="w-20 h-20 object-cover rounded-full border-4 border-blue-400"
           />
 
-          <div className="absolute bottom-0 right-0 bg-green-500 text-white text-xs rounded-full px-2 py-1">
+          <div className="absolute bottom-0 right-0 bg-blue-400 text-white text-xs rounded-full px-2 py-1">
             🏢
           </div>
         </div>

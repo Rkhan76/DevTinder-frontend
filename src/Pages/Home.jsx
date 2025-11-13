@@ -5,6 +5,7 @@ import QuickStats from "../components/homePageComponents/QuickStats"
 import SuggestedFriends from "../components/homePageComponents/SuggestedFriends";
 import TrendingTopics from "../components/homePageComponents/TrendingTopics";
 import ProfileCard from "../components/homePageComponents/ProfileCard";
+import SidebarMenu from "../components/homePageComponents/SidebarMenu";
 
 const Home = () => {
 
@@ -32,7 +33,8 @@ const Home = () => {
                     profileImage="https://i.pravatar.cc/300?img=12"
                     verified={true}
                   />
-                  <QuickStats />
+                  <SidebarMenu/>
+                  {/* <QuickStats /> */}
                 </div>
               </div>
             </aside>
