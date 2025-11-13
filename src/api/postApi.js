@@ -2,8 +2,11 @@ import axios from '../utils/axiosConfig'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
+/* ===========================================
+   CREATE POST
+=========================================== */
 export const addPost = async (formData) => {
-  const api = `${BASE_URL}/post/add`
+  const api = `${BASE_URL}/posts`
   try {
     const response = await axios.post(api, formData)
     return response.data
@@ -13,8 +16,13 @@ export const addPost = async (formData) => {
   }
 }
 
-export const fetchUserPosts = async (userId, page = 1) => {
-  const api = `${BASE_URL}/post/user/${userId}?page=${page}&limit=10`
+/* ===========================================
+   FETCH POSTS
+=========================================== */
+
+// Get all posts (feed)
+export const fetchAllPosts = async (page = 1) => {
+  const api = `${BASE_URL}/posts?page=${page}&limit=10`
   try {
     const response = await axios.get(api)
     return response.data
@@ -23,8 +31,9 @@ export const fetchUserPosts = async (userId, page = 1) => {
   }
 }
 
-export const fetchAllPosts = async (page) => {
-  const api = `${BASE_URL}/post/all?page=${page}&limit=10`
+// Get posts by a specific user
+export const fetchUserPosts = async (userId, page = 1) => {
+  const api = `${BASE_URL}/posts/user/${userId}?page=${page}&limit=10`
   try {
     const response = await axios.get(api)
     return response.data
@@ -32,9 +41,13 @@ export const fetchAllPosts = async (page) => {
     throw error
   }
 }
+
+/* ===========================================
+   LIKE, COMMENT, REPOST
+=========================================== */
 
 export const onLikePost = async (postId) => {
-  const api = `${BASE_URL}/post/${postId}/like`
+  const api = `${BASE_URL}/posts/${postId}/like`
   try {
     const res = await axios.patch(api)
     return res.data
@@ -45,7 +58,7 @@ export const onLikePost = async (postId) => {
 }
 
 export const addCommentToPost = async (postId, commentText) => {
-  const api = `${BASE_URL}/post/${postId}/comment`
+  const api = `${BASE_URL}/posts/${postId}/comments`
   try {
     const res = await axios.post(api, { text: commentText })
     return res.data
@@ -58,60 +71,103 @@ export const addCommentToPost = async (postId, commentText) => {
   }
 }
 
-// Search posts by query
+export const repostPost = async (postId, message) => {
+  const api = `${BASE_URL}/posts/${postId}/reposts`
+  try {
+    const response = await axios.post(api, { message })
+    return response.data
+  } catch (error) {
+    console.error(
+      'Error reposting post:',
+      error.response?.data || error.message
+    )
+    throw error
+  }
+}
+
+/* ===========================================
+   SAVE / UNSAVE
+=========================================== */
+
+export const savePost = async (postId) => {
+  const api = `${BASE_URL}/posts/${postId}/save`
+  try {
+    const response = await axios.post(api)
+    console.log(postId, ' Post id in save post api function')
+    console.log("response of save post function ", response)
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Failed to save post')
+    }
+    return response.data
+  } catch (error) {
+    console.error('Error saving post:', error)
+    throw error
+  }
+}
+
+export const getSavedPosts = async () => {
+  const api = `${BASE_URL}/posts/saved`
+  try {
+    const response = await axios.get(api)
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Failed to fetch saved posts')
+    }
+
+    return response.data
+  } catch (error) {
+    console.error('Error fetching saved posts:', error)
+    throw error
+  }
+}
+
+/* ===========================================
+   DELETE POST
+=========================================== */
+
+export const deletePost = async (postId) => {
+  const api = `${BASE_URL}/posts/${postId}`
+  try {
+    const response = await axios.delete(api)
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Failed to delete post')
+    }
+
+    return response.data
+  } catch (error) {
+    console.error('Delete post failed:', error)
+    throw error
+  }
+}
+
+/* ===========================================
+   SEARCH POSTS
+=========================================== */
+
 export const searchPosts = async (query) => {
-  const api = `${BASE_URL}/post/search?query=${encodeURIComponent(query)}`
+  const api = `${BASE_URL}/posts/search?query=${encodeURIComponent(query)}`
   const response = await axios.get(api)
   return response.data
 }
 
-// Repost functionality
-export const repostPost = async (postId, message) => {
-  
-  const api = `${BASE_URL}/post/${postId}/repost`
-  
-  try {
-    const response = await axios.post(api, {message})
-    return response.data
-  } catch (error) {
-    console.error('Error reposting post:', error.response?.data || error.message)
-    throw error
-  }
-}
+/* ===========================================
+   GET SINGLE POST
+=========================================== */
 
-// Delete its own post by user
-export const deletePost = async (formData) => {
-  const api = `${BASE_URL}/post/add`
-  try {
-    const response = await axios.post(api, formData)
-    return response.data
-  } catch (error) {
-    console.error('Add post failed:', error)
-    throw error
-  }
-}
-
-//fetch one post
 export const getSinglePostById = async (postId) => {
-  console.log(postId, " Post id has reached getSinglePost api")
-  const api = `${BASE_URL}/post/${postId}`
+  const api = `${BASE_URL}/posts/${postId}`
+
   try {
     const response = await axios.get(api)
 
-    console.log(response, ' response data of the single post')
-    
-    // Fixed condition: Remove the extra exclamation mark
     if (response.status !== 200) {
       throw new Error(response.data.message || 'Failed to fetch post')
     }
 
-    console.log('Successfully fetched single post data')
     return response.data
   } catch (error) {
     console.error('Error fetching single post:', error)
     throw error
   }
 }
-
-
-

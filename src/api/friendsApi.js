@@ -2,78 +2,94 @@ import axios from '../utils/axiosConfig'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
-// Fetch people you may know
+/* ========================================
+   📌 GET PEOPLE YOU MAY KNOW (Recommendations)
+======================================== */
 export const getPeopleYouMayKnow = async (page = 1, limit = 10) => {
-  const api = `${BASE_URL}/user/get-people-you-may-know?page=${page}&limit=${limit}`
+  const api = `${BASE_URL}/friends/recommendations?page=${page}&limit=${limit}`
 
-  console.log(`Fetching people you may know from: ${api}`)
   try {
     const response = await axios.get(api)
-    return response.data // contains { success, data, pagination }
+    return response.data
   } catch (error) {
-    console.error('Something went wrong while fetching people you may know:', error)
+    console.error('Error fetching recommendations:', error)
     throw error
   }
 }
 
-// Send friend request
+/* ========================================
+   📌 SEND FRIEND REQUEST
+======================================== */
 export const sendFriendRequest = async (userId) => {
   try {
-    const response = await API.post(`/user/add-friend/${userId}`);
-    return response.data;
+    const api = `${BASE_URL}/friends/requests/${userId}`
+    const response = await axios.post(api)
+    return response.data
   } catch (error) {
-    console.error("Error sending friend request:", error.response?.data || error.message);
-    throw error.response?.data || error;
+    console.error(
+      'Error sending friend request:',
+      error.response?.data || error.message
+    )
+    throw error.response?.data || error
   }
-};
+}
 
-
-// fetch the people send friend request to you
+/* ========================================
+   📌 GET REQUESTS SENT TO YOU
+======================================== */
 export const getPeopleWhoSentYouTheFriendRequest = async () => {
-  const api = `${BASE_URL}/user/friend-requests`
+  const api = `${BASE_URL}/friends/requests`
 
-  console.log(`Fetching people you may know from: ${api}`)
   try {
     const response = await axios.get(api)
-    return response.data 
+    return response.data
   } catch (error) {
-    console.error(
-      'Something went wrong while fetching people you may know:',
-      error
-    )
+    console.error('Error fetching incoming friend requests:', error)
     throw error
   }
 }
 
-
-// Accept friend request
+/* ========================================
+   📌 ACCEPT FRIEND REQUEST
+======================================== */
 export const acceptTheFriendRequest = async (userId) => {
-  const api = `${BASE_URL}/user/accept-friend-request/${userId}`
-
-  try {
-    const response = await axios.post(api)
-    return response.data 
-  } catch (error) {
-    console.error(
-      'Something went wrong while accepting the friend request:',
-      error
-    )
-    throw error
-  }
-}
-
-// Reject friend request
-export const rejectTheFriendRequest = async (userId) => {
-  const api = `${BASE_URL}/user/reject-friend-request/${userId}`
+  const api = `${BASE_URL}/friends/requests/${userId}/accept`
 
   try {
     const response = await axios.post(api)
     return response.data
   } catch (error) {
-    console.error(
-      'Something went wrong while rejecting the friend request:',
-      error
-    )
+    console.error('Error accepting friend request:', error)
+    throw error
+  }
+}
+
+/* ========================================
+   📌 REJECT FRIEND REQUEST
+======================================== */
+export const rejectTheFriendRequest = async (userId) => {
+  const api = `${BASE_URL}/friends/requests/${userId}/reject`
+
+  try {
+    const response = await axios.post(api)
+    return response.data
+  } catch (error) {
+    console.error('Error rejecting friend request:', error)
+    throw error
+  }
+}
+
+/* ========================================
+   📌 SUGGESTED FRIENDS (AI recommendations)
+======================================== */
+export const getSuggestedFriends = async () => {
+  const api = `${BASE_URL}/friends/suggestions`
+
+  try {
+    const response = await axios.get(api)
+    return response.data
+  } catch (error) {
+    console.error('Error fetching suggested friends:', error)
     throw error
   }
 }

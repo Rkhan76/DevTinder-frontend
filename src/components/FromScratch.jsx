@@ -7,6 +7,8 @@ export const FromScratch = ({ posts, fetchData, loading, error }) => {
   // Memoize fetchData to prevent unnecessary re-renders
   const handleLoadMore = useCallback((page) => fetchData(page), [fetchData])
 
+  console.log(posts , " post in the fromscratch compoenent")
+
   // Pass loading state to useInfiniteScroll to prevent requests while loading
   useInfiniteScroll(handleLoadMore, loading)
 

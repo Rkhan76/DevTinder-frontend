@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 import toast from "react-hot-toast"
-import { handleupdateAboutSection } from "../../api/profile"
+import { handleUpdateAboutSection } from "../../api/profile"
 
 const AboutSection = ({
   profileData,
@@ -20,7 +20,7 @@ const AboutSection = ({
   }
 
   const handleSaveProfile = async() => {
-    await handleupdateAboutSection(tempFormData)
+    await handleUpdateAboutSection(tempFormData)
     setProfileData(tempFormData)
     setIsEditModalOpen(false)
     toast.success("Profile updated successfully!")

@@ -1,8 +1,8 @@
 // import { MyNetworkHeader } from './mynetwork/mynetwork-header'
-import { InvitationsSection } from './myNetworkComponents/invitation-section'
-import { PeopleYouMayKnow } from './myNetworkComponents/people-you-may-know'
-import { NetworkStats } from './myNetworkComponents/network-stats'
-import { RecentActivity } from './myNetworkComponents/recent-activites'
+import { InvitationsSection } from '../components/myNetworkComponents/invitation-section'
+import { PeopleYouMayKnow } from '../components/myNetworkComponents/people-you-may-know'
+import { NetworkStats } from '../components/myNetworkComponents/network-stats'
+import { RecentActivity } from '../components/myNetworkComponents/recent-activites'
 
 export default function MyNetworkPage() {
   return (

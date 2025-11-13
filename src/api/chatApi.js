@@ -1,13 +1,22 @@
-import axiosInstance from '../utils/axiosConfig';
+import axiosInstance from '../utils/axiosConfig'
+
+/* ============================
+   CHAT API
+============================ */
 
 // Fetch chat history with a user
 export const fetchChatHistory = async (userId) => {
-  const response = await axiosInstance.get(`/chat/${userId}`);
-  return response.data;
-};
+  const response = await axiosInstance.get(`/chats/${userId}`) // UPDATED
+  return response.data
+}
 
-// Optionally, send a message via REST (not required for real-time, but can be used for fallback)
+// Send a message (REST fallback)
 export const sendMessage = async ({ sender, receiver, message }) => {
-  const response = await axiosInstance.post('/chat/send', { sender, receiver, message });
-  return response.data;
-}; 
+  const response = await axiosInstance.post('/chats/send', {
+    // UPDATED
+    sender,
+    receiver,
+    message,
+  })
+  return response.data
+}

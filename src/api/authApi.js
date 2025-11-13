@@ -2,6 +2,10 @@ import axios from '../utils/axiosConfig'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
+/* ============================
+   AUTH
+============================ */
+
 export const userLogin = async (email, password) => {
   const api = `${BASE_URL}/auth/login`
   const response = await axios.post(api, { email, password })
@@ -10,21 +14,18 @@ export const userLogin = async (email, password) => {
 
 export const userSignup = async (fullName, emailId, password) => {
   const api = `${BASE_URL}/auth/register`
- 
-    const response = await axios.post(api, {
-      fullName,
-      email: emailId,
-      password,
-    })
-    return response.data
+  const response = await axios.post(api, {
+    fullName,
+    email: emailId,
+    password,
+  })
+  return response.data
 }
 
 export const signInWithGoogle = async (code) => {
   const api = `${BASE_URL}/auth/google`
   const response = await axios.post(api, { code })
-  console.log(response, " response in the signInWith google api")
   return response.data
-  
 }
 
 export const isAuthenticated = async () => {
@@ -38,20 +39,24 @@ export const isAuthenticated = async () => {
 
 export const userLogout = async () => {
   const api = `${BASE_URL}/auth/logout`
-    const response = await axios.get(api)
-    return response.data
-}
-
-// Fetch all users (for chat sidebar)
-export const fetchAllUsers = async () => {
-  const api = `${BASE_URL}/user/all`
   const response = await axios.get(api)
   return response.data
 }
 
-// Search users by query
+/* ============================
+   USERS
+============================ */
+
+// Fetch all users
+export const fetchAllUsers = async () => {
+  const api = `${BASE_URL}/users` // UPDATED
+  const response = await axios.get(api)
+  return response.data
+}
+
+// Search users
 export const searchUsers = async (query) => {
-  const api = `${BASE_URL}/user/search?query=${encodeURIComponent(query)}`
+  const api = `${BASE_URL}/users/search?query=${encodeURIComponent(query)}` // UPDATED
   const response = await axios.get(api)
   return response.data
 }

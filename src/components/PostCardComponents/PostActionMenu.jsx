@@ -14,6 +14,8 @@ import {
   FaBellSlash,
 } from 'react-icons/fa'
 import DeleteConfirmationModal from './DeleteConfirmationModal'
+import { deletePost, savePost } from '../../api/postApi'
+import toast from 'react-hot-toast'
 
 const PostActionMenu = ({ isOwner = false, postId, onClose }) => {
 
@@ -36,17 +38,29 @@ const PostActionMenu = ({ isOwner = false, postId, onClose }) => {
   const handleConfirmDelete = async () => {
     try {
       setDeleting(true)
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
 
-      console.log('Post deleted:', postId)
-      // Here you would call your actual delete API
-      // await deletePostAPI(postId)
+      // Call the actual delete API
+      const response = await deletePost(postId)
 
-      onClose()
-      // You might want to refresh the posts list or navigate away
+      if (response.success) {
+        console.log('Post deleted successfully:', postId)
+        toast.success('Post deleted successfully')
+
+        onClose()
+
+        // Callback to refresh posts list or update UI
+        // if (onPostDeleted) {
+        //   onPostDeleted(postId)
+        // }
+
+        // Optional: If you're on the single post page, navigate away
+        // if (isSinglePostPage) {
+        //   navigate('/') // Navigate to home or feed
+        // }
+      }
     } catch (error) {
       console.error('Error deleting post:', error)
+      toast.error(error.message || 'Failed to delete post')
     } finally {
       setDeleting(false)
       setShowDeleteModal(false)
@@ -78,7 +92,7 @@ const PostActionMenu = ({ isOwner = false, postId, onClose }) => {
   const handleCopyLink = () => {
     const link = `${window.location.origin}/post/${postId}`
     navigator.clipboard.writeText(link)
-    console.log('Copied link:', link)
+    toast.success('Post link copied to clipboard! 🔗')
     onClose()
     // Optional: show toast notification
   }
@@ -91,10 +105,16 @@ const PostActionMenu = ({ isOwner = false, postId, onClose }) => {
 
   // 🔹 --------------- Viewer Actions ---------------
 
-  const handleSavePost = () => {
-    console.log('Saved post:', postId)
-    onClose()
-    // Example: saveForLater(postId)
+  const handleSavePost = async () => {
+    try {
+      console.log(postId, " i am in handle save post function")
+      const res = await savePost(postId)
+      console.log(res, ' response after saving the post')
+      toast.success('Post saved!')
+      onClose()
+    } catch (err) {
+      toast.error('Failed to save post')
+    }
   }
 
   const handleReportPost = () => {
@@ -224,7 +244,7 @@ const PostActionMenu = ({ isOwner = false, postId, onClose }) => {
             className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
           >
             <FaUserSlash className="text-gray-500 text-sm" />
-            Unfollow Author
+            UnFriend Author
           </button>
 
           <button

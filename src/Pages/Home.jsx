@@ -4,8 +4,15 @@ import NetworkActivity from "../components/homePageComponents/NetworkAcitivity";
 import QuickStats from "../components/homePageComponents/QuickStats"
 import SuggestedFriends from "../components/homePageComponents/SuggestedFriends";
 import TrendingTopics from "../components/homePageComponents/TrendingTopics";
+import ProfileCard from "../components/homePageComponents/ProfileCard";
 
 const Home = () => {
+
+   const dummySkills = [
+     { name: 'React', color: 'text-blue-700', bgColor: 'bg-blue-100' },
+     { name: 'Node', color: 'text-green-700', bgColor: 'bg-green-100' },
+     { name: 'JS', color: 'text-yellow-700', bgColor: 'bg-yellow-100' },
+   ]
   return (
     <div className="h-full overflow-y-auto">
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -13,11 +20,19 @@ const Home = () => {
           <div className="flex flex-col lg:flex-row gap-8">
             <aside className="hidden lg:block lg:w-80">
               <div className="sticky top-6 h-fit">
-                {" "}
+                {' '}
                 {/* Changed from top-24 to top-6 for earlier sticking */}
                 <div className="space-y-6">
-                  <QuickStats/>
-                  <TrendingTopics />
+                  <ProfileCard
+                    name="Rohan Sharma"
+                    title="Software Engineer @ Microsoft"
+                    description="Building cloud-native applications using React, NodeJS & Azure. Passionate about scalable architecture and performance."
+                    location="Bengaluru, India"
+                    skills={dummySkills}
+                    profileImage="https://i.pravatar.cc/300?img=12"
+                    verified={true}
+                  />
+                  <QuickStats />
                 </div>
               </div>
             </aside>
@@ -35,6 +50,9 @@ const Home = () => {
                   <SuggestedFriends />
                 </div>
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                  <TrendingTopics />
+                </div>
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                   <NetworkActivity />
                 </div>
               </div>
@@ -43,7 +61,7 @@ const Home = () => {
         </div>
       </main>
     </div>
-  );
+  )
 };
 
 export default Home;
