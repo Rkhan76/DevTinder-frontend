@@ -1,4 +1,4 @@
-import CreatePost from "../components/homePageComponents/CreatePost";
+import CreatePost from "../components/homePageComponents/CreatePost/CreatePostMain"
 import Feed from "../components/PostCardComponents/Feed";
 import NetworkActivity from "../components/homePageComponents/NetworkAcitivity";
 import QuickStats from "../components/homePageComponents/QuickStats"
@@ -54,9 +54,9 @@ const Home = () => {
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                   <TrendingTopics />
                 </div>
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                {/* <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                   <NetworkActivity />
-                </div>
+                </div> */}
               </div>
             </aside>
           </div>

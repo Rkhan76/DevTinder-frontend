@@ -1,20 +1,19 @@
 import { useState, useRef } from 'react'
-import { IoMdImages } from 'react-icons/io'
+import { IoMdImages, IoMdVideocam } from 'react-icons/io'
 import { addPost } from '../../api/postApi'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 import { getAvatarColor, getInitials } from '../../utils/userAvtar'
 
-
 const CreatePost = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [content, setContent] = useState('')
-  const [image, setImage] = useState(null)
+  const [media, setMedia] = useState(null)
+  const [mediaType, setMediaType] = useState(null) // 'image' or 'video'
   const [creatingPostLoading, setCreatingPostLoading] = useState(false)
-  const [imagePreview, setImagePreview] = useState(null)
+  const [mediaPreview, setMediaPreview] = useState(null)
   const fileInputRef = useRef(null)
   const user = useSelector((state) => state.auth.user)
-
 
   const WORD_LIMIT = 300
   const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0
@@ -24,35 +23,70 @@ const CreatePost = () => {
   const handleCloseModal = () => {
     setModalOpen(false)
     setContent('')
-    setImage(null)
-    setImagePreview(null)
+    setMedia(null)
+    setMediaType(null)
+    setMediaPreview(null)
 
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
   }
 
-  const handleImageChange = (e) => {
+  const handleMediaChange = (e, type) => {
     const file = e.target.files[0]
     if (file) {
-      setImage(file)
-      setImagePreview(URL.createObjectURL(file))
+      // Validate file size (10MB limit)
+      const maxSize = 10 * 1024 * 1024 // 10MB in bytes
+      if (file.size > maxSize) {
+        toast.error(`File size too large. Maximum size is 10MB.`)
+        return
+      }
+
+      // Validate file type
+      if (type === 'image' && !file.type.startsWith('image/')) {
+        toast.error('Please select a valid image file')
+        return
+      }
+
+      if (type === 'video' && !file.type.startsWith('video/')) {
+        toast.error('Please select a valid video file')
+        return
+      }
+
+      setMedia(file)
+      setMediaType(type)
+      setMediaPreview(URL.createObjectURL(file))
+
       if (!modalOpen) {
         handleOpenModal()
       }
     }
   }
 
+  const handleImageUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.accept = 'image/*'
+      fileInputRef.current.click()
+    }
+  }
+
+  const handleVideoUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.accept = 'video/*'
+      fileInputRef.current.click()
+    }
+  }
+
   const handlePost = async () => {
-    if (!content.trim() && !image) {
-      toast.error('Post content or image required')
+    if (!content.trim() && !media) {
+      toast.error('Post content or media required')
       return
     }
 
     const formData = new FormData()
     formData.append('content', content)
-    if (image) {
-      formData.append('media', image) 
+    if (media) {
+      formData.append('media', media)
     }
 
     try {
@@ -103,23 +137,42 @@ const CreatePost = () => {
           >
             <span className="text-gray-600 text-base">Start a post...</span>
           </div>
-          <button
-            className="p-3 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-all duration-200 group"
-            onClick={(e) => {
-              e.stopPropagation()
-              if (fileInputRef.current) {
-                fileInputRef.current.click()
-              }
-            }}
-          >
-            <IoMdImages className="text-2xl group-hover:scale-110 transition-transform duration-200" />
-          </button>
+
+          {/* Media Upload Buttons */}
+          <div className="flex gap-2">
+            <button
+              className="p-3 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-all duration-200 group"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleImageUpload()
+              }}
+              title="Add image"
+            >
+              <IoMdImages className="text-2xl group-hover:scale-110 transition-transform duration-200" />
+            </button>
+            <button
+              className="p-3 rounded-full hover:bg-green-50 text-green-600 hover:text-green-700 transition-all duration-200 group"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleVideoUpload()
+              }}
+              title="Add video"
+            >
+              <IoMdVideocam className="text-2xl group-hover:scale-110 transition-transform duration-200" />
+            </button>
+          </div>
+
           <input
             type="file"
-            accept="image/*"
             className="hidden"
             ref={fileInputRef}
-            onChange={handleImageChange}
+            onChange={(e) => {
+              if (fileInputRef.current.accept === 'image/*') {
+                handleMediaChange(e, 'image')
+              } else {
+                handleMediaChange(e, 'video')
+              }
+            }}
           />
         </div>
       </div>
@@ -191,36 +244,59 @@ const CreatePost = () => {
                 )}
               </div>
 
-              {imagePreview && (
+              {mediaPreview && (
                 <div className="mt-6 p-4 bg-gray-50 rounded-2xl">
-                  <img
-                    src={imagePreview || '/placeholder.svg'}
-                    alt="Preview"
-                    className="rounded-xl max-h-60 object-contain mx-auto shadow-sm"
-                  />
-                  <button
-                    className="mt-3 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-medium transition-colors duration-200"
-                    onClick={() => {
-                      setImage(null)
-                      setImagePreview(null)
-                    }}
-                  >
-                    Remove Image
-                  </button>
+                  {mediaType === 'image' ? (
+                    <img
+                      src={mediaPreview || '/placeholder.svg'}
+                      alt="Preview"
+                      className="rounded-xl max-h-60 object-contain mx-auto shadow-sm"
+                    />
+                  ) : (
+                    <video
+                      src={mediaPreview}
+                      controls
+                      className="rounded-xl max-h-60 object-contain mx-auto shadow-sm"
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  )}
+                  <div className="flex items-center justify-between mt-3">
+                    <span className="text-sm text-gray-600 capitalize">
+                      {mediaType} • {media?.name}
+                    </span>
+                    <button
+                      className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-medium transition-colors duration-200"
+                      onClick={() => {
+                        setMedia(null)
+                        setMediaType(null)
+                        setMediaPreview(null)
+                      }}
+                    >
+                      Remove {mediaType}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
 
             <div className="px-8 py-6 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-              <button
-                className="p-3 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-all duration-200 group"
-                onClick={(e) => {
-                  e.preventDefault()
-                  fileInputRef.current.click()
-                }}
-              >
-                <IoMdImages className="text-2xl group-hover:scale-110 transition-transform duration-200" />
-              </button>
+              <div className="flex gap-2">
+                <button
+                  className="p-3 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-all duration-200 group"
+                  onClick={handleImageUpload}
+                  title="Add image"
+                >
+                  <IoMdImages className="text-2xl group-hover:scale-110 transition-transform duration-200" />
+                </button>
+                <button
+                  className="p-3 rounded-full hover:bg-green-50 text-green-600 hover:text-green-700 transition-all duration-200 group"
+                  onClick={handleVideoUpload}
+                  title="Add video"
+                >
+                  <IoMdVideocam className="text-2xl group-hover:scale-110 transition-transform duration-200" />
+                </button>
+              </div>
 
               <div className="flex gap-3">
                 <button
@@ -232,7 +308,7 @@ const CreatePost = () => {
                 <button
                   className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   onClick={handlePost}
-                  disabled={(!content.trim() && !image) || overLimit}
+                  disabled={(!content.trim() && !media) || overLimit}
                 >
                   Post
                 </button>
@@ -241,10 +317,15 @@ const CreatePost = () => {
 
             <input
               type="file"
-              accept="image/*"
               className="hidden"
               ref={fileInputRef}
-              onChange={handleImageChange}
+              onChange={(e) => {
+                if (fileInputRef.current.accept === 'image/*') {
+                  handleMediaChange(e, 'image')
+                } else {
+                  handleMediaChange(e, 'video')
+                }
+              }}
             />
 
             {creatingPostLoading && (
@@ -253,7 +334,11 @@ const CreatePost = () => {
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
                   Creating Post...
                 </h3>
-                <p className="text-gray-600">Uploading your content</p>
+                <p className="text-gray-600">
+                  {mediaType === 'video'
+                    ? 'Processing video...'
+                    : 'Uploading your content'}
+                </p>
               </div>
             )}
           </div>
