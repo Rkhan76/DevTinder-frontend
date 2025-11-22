@@ -2,10 +2,11 @@ import { IoMdImages, IoMdVideocam } from 'react-icons/io'
 import toast from 'react-hot-toast'
 import { useRef } from 'react'
 
-const MediaUpload = ({ onMediaChange }) => {
-  const fileInputRef = useRef(null)
-
+const MediaUpload = ({ onMediaChange, fileInputRef 
+ }) => {
+  
   const handleFileSelect = (type) => {
+  
     if (!fileInputRef.current) {
       console.error('File input not found')
       return
@@ -23,9 +24,9 @@ const MediaUpload = ({ onMediaChange }) => {
       if (!file) return
 
       // Validate file size (10MB limit)
-      const maxSize = 10 * 1024 * 1024
+      const maxSize = 50 * 1024 * 1024
       if (file.size > maxSize) {
-        toast.error('File size too large. Maximum size is 10MB.')
+        toast.error('File size too large. Maximum size is 50MB.')
         return
       }
 
@@ -67,6 +68,7 @@ const MediaUpload = ({ onMediaChange }) => {
         className="p-3 rounded-full hover:bg-green-50 text-green-600 hover:text-green-700 transition-all duration-200 group"
         onClick={(e) => {
           e.stopPropagation()
+          console.log("Clicked the video icon")
           handleFileSelect('video')
         }}
         title="Add video"

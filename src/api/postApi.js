@@ -171,3 +171,6 @@ export const getSinglePostById = async (postId) => {
     throw error
   }
 }
+
+
+

@@ -2,87 +2,114 @@ import { useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { addPost } from '../../../api/postApi'
 import toast from 'react-hot-toast'
-// import { getAvatarColor, getInitials } from '../../utils/userAvtar'
 import PostModal from './PostModal'
 import MediaUpload from './MediaUpload'
 import UserAvatar from './UserAvatar'
+import { handlePostMediaImmediately } from '../../../api/mediaApi'
 
 const CreatePost = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [content, setContent] = useState('')
   const [media, setMedia] = useState(null)
   const [mediaType, setMediaType] = useState(null)
-  const [creatingPostLoading, setCreatingPostLoading] = useState(false)
-  const [mediaPreview, setMediaPreview] = useState(null)
   const [uploadProgress, setUploadProgress] = useState(0)
+  const [mediaPreview, setMediaPreview] = useState(null)
+  const [tempMediaId, setTempMediaId] = useState(null)
+
+  // ⭐ NEW STATES
+  const [cloudUrl, setCloudUrl] = useState(null)
+  const [isUploaded, setIsUploaded] = useState(false)
+
+  const fileInputRef = useRef(null)
   const user = useSelector((state) => state.auth.user)
 
   const handleOpenModal = () => setModalOpen(true)
 
-  const handleCloseModal = () => {
+  const handleCloseModal = async() => {
+    if (tempMediaId && !isUploaded) {
+    await deleteTempMedia(tempMediaId)
+  }
     setModalOpen(false)
     setContent('')
     setMedia(null)
     setMediaType(null)
     setMediaPreview(null)
     setUploadProgress(0)
+    setCloudUrl(null)
+    setIsUploaded(false)
   }
 
+  // When the user selects media from frontend
   const handleMediaChange = (file, type) => {
-    // 1. Set media state and open modal immediately
+    // 1. Save local file info
     setMedia(file)
     setMediaType(type)
     setMediaPreview(URL.createObjectURL(file))
     setModalOpen(true)
 
-    // 2. Start upload immediately in background
+    // 2. Start background upload
     handlePostImmediately(file, type)
   }
 
+  // Upload media immediately after selection
   const handlePostImmediately = async (file, type) => {
     if (!file) return
 
     const formData = new FormData()
-    formData.append('content', content)
     formData.append('media', file)
 
     try {
-      setCreatingPostLoading(true)
       setUploadProgress(10)
+      setIsUploaded(false)
+      setCloudUrl(null)
 
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 90) {
-            clearInterval(progressInterval)
-            return prev
-          }
-          return prev + 10
-        })
-      }, 300)
+      // Fake progress until 90%
+     const progressInterval = setInterval(() => {
+       setUploadProgress((prev) => {
+         if (prev >= 90) {
+           clearInterval(progressInterval)
+           return prev
+         }
 
-      const res = await addPost(formData)
+         // Dynamic speed:
+         let increment = 0
+
+         if (prev < 50) increment = 3 // fast start
+         else if (prev < 80) increment = 2 // medium
+         else increment = 1 // slow near 90%
+
+         return prev + increment
+       })
+     }, 500)
+
+
+      // Actual upload API call
+      const res = await handlePostMediaImmediately(formData)
+
+      console.log("response of handlePostMediaImmidiatly : ", res)
 
       clearInterval(progressInterval)
       setUploadProgress(100)
 
       if (res.success) {
-        toast.success('Post created successfully!')
-        setTimeout(() => {
-          handleCloseModal()
-        }, 1000)
+        // ⭐ Save cloudinary URL and mark upload complete
+        setTempMediaId(res.tempMediaId) 
+        setCloudUrl(res.url)
+        setIsUploaded(true)
+
+        toast.success(`${type} uploaded successfully`)
       } else {
-        toast.error(res.message || 'Failed to create post')
-        setCreatingPostLoading(false)
+        toast.error(res.message || `Failed to upload ${type}`)
         setUploadProgress(0)
       }
     } catch (err) {
       console.error(err)
       toast.error('Something went wrong while posting')
-      setCreatingPostLoading(false)
       setUploadProgress(0)
     }
   }
 
+  // Final create post button
   const handlePost = async () => {
     if (!content.trim() && !media) {
       toast.error('Post content or media required')
@@ -91,10 +118,14 @@ const CreatePost = () => {
 
     const formData = new FormData()
     formData.append('content', content)
-    if (media) formData.append('media', media)
+
+    // If media was uploaded — save Cloudinary URL instead of file
+    if (isUploaded && cloudUrl) {
+      formData.append('mediaUrl', cloudUrl)
+      formData.append('mediaType', mediaType)
+    }
 
     try {
-      setCreatingPostLoading(true)
       const res = await addPost(formData)
       if (res.success) {
         toast.success('Post created successfully')
@@ -105,14 +136,12 @@ const CreatePost = () => {
     } catch (err) {
       console.error(err)
       toast.error('Something went wrong while posting')
-    } finally {
-      setCreatingPostLoading(false)
     }
   }
 
   return (
     <>
-      {/* Post Creation Trigger */}
+      {/* Main Post Box */}
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
         <div className="flex items-center gap-4">
           <UserAvatar user={user} size="md" />
@@ -124,7 +153,10 @@ const CreatePost = () => {
             <span className="text-gray-600 text-base">Start a post...</span>
           </div>
 
-          <MediaUpload onMediaChange={handleMediaChange} />
+          <MediaUpload
+            onMediaChange={handleMediaChange}
+            fileInputRef={fileInputRef}
+          />
         </div>
       </div>
 
@@ -142,8 +174,11 @@ const CreatePost = () => {
           setMediaPreview={setMediaPreview}
           onPost={handlePost}
           onClose={handleCloseModal}
-          isLoading={creatingPostLoading}
           uploadProgress={uploadProgress}
+          cloudUrl={cloudUrl}
+          isUploaded={isUploaded}
+          tempMediaId={tempMediaId}
+          setCloudUrl={setCloudUrl}
         />
       )}
     </>
