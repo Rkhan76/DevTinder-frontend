@@ -1,3 +1,4 @@
+// src/components/homePageComponents/CreatePost/CreatePost.jsx
 import { useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { addPost } from '../../../api/postApi'
@@ -8,6 +9,7 @@ import UserAvatar from './UserAvatar'
 import {
   handlePostMediaImmediately,
   deleteTempMedia,
+  cancelMediaUpload,
 } from '../../../api/mediaApi'
 
 const CreatePost = () => {
@@ -19,7 +21,7 @@ const CreatePost = () => {
   const [mediaPreview, setMediaPreview] = useState(null)
   const [tempMediaId, setTempMediaId] = useState(null)
 
-  // ⭐ NEW STATES
+  // NEW STATES
   const [cloudUrl, setCloudUrl] = useState(null)
   const [isUploaded, setIsUploaded] = useState(false)
 
@@ -29,8 +31,16 @@ const CreatePost = () => {
   const handleOpenModal = () => setModalOpen(true)
 
   const handleCloseModal = async () => {
+    // Abort any in-progress upload
+    cancelMediaUpload()
+
+    // If there's a temp media saved on server but not finalized, delete it
     if (tempMediaId && !isUploaded) {
-      await deleteTempMedia(tempMediaId)
+      try {
+        await deleteTempMedia(tempMediaId)
+      } catch (err) {
+        console.warn('Failed to delete temp media on close:', err.message)
+      }
     }
 
     setModalOpen(false)
@@ -44,16 +54,18 @@ const CreatePost = () => {
     setTempMediaId(null)
   }
 
-  // ⭐ SAME MEDIA HANDLER USED INSIDE MODAL
+  // When the user selects media from frontend (either via MediaUpload or modal icons)
   const handleMediaChange = (file, type) => {
     setMedia(file)
     setMediaType(type)
     setMediaPreview(URL.createObjectURL(file))
     setModalOpen(true)
 
+    // Immediately upload
     handlePostImmediately(file, type)
   }
 
+  // Immediate upload function
   const handlePostImmediately = async (file, type) => {
     if (!file) return
 
@@ -65,6 +77,7 @@ const CreatePost = () => {
       setIsUploaded(false)
       setCloudUrl(null)
 
+      // Fake progress until 90%
       const progressInterval = setInterval(() => {
         setUploadProgress((prev) => {
           if (prev >= 90) {
@@ -80,11 +93,17 @@ const CreatePost = () => {
       clearInterval(progressInterval)
       setUploadProgress(100)
 
+      if (res?.cancelled) {
+        // upload was cancelled by user
+        setUploadProgress(0)
+        toast.error('Upload cancelled')
+        return
+      }
+
       if (res.success) {
         setTempMediaId(res.tempMediaId)
         setCloudUrl(res.url)
         setIsUploaded(true)
-
         toast.success(`${type} uploaded successfully`)
       } else {
         toast.error(res.message || `Failed to upload ${type}`)
@@ -102,8 +121,9 @@ const CreatePost = () => {
       toast.error('Post content or media required')
       return
     }
-     console.log(tempMediaId)
+
     try {
+      // Using the API signature you had in your component (content, tempMediaId)
       const res = await addPost(content, tempMediaId)
       if (res.success) {
         toast.success('Post created successfully')
@@ -160,7 +180,7 @@ const CreatePost = () => {
           setTempMediaId={setTempMediaId}
           setIsUploaded={setIsUploaded}
           fileInputRef={fileInputRef}
-          handleMediaChange={handleMediaChange} // ⭐ NEW
+          handleMediaChange={handleMediaChange}
         />
       )}
     </>

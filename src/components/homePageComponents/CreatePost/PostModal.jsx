@@ -1,8 +1,10 @@
+// src/components/homePageComponents/CreatePost/PostModal.jsx
 import { IoMdImages, IoMdVideocam } from 'react-icons/io'
 import UserAvatar from './UserAvatar'
 import PostForm from './PostForm'
 import LoadingOverlay from './LoadingOverlay'
-import { deleteTempMedia } from '../../../api/mediaApi'
+import { deleteTempMedia, cancelMediaUpload } from '../../../api/mediaApi'
+import toast from 'react-hot-toast'
 
 const PostModal = ({
   user,
@@ -25,16 +27,22 @@ const PostModal = ({
   uploadProgress,
   tempMediaId,
 
-  // ⭐ NEW
+  // NEW
   handleMediaChange,
   fileInputRef,
 }) => {
   const canPost = (content.trim() || cloudUrl) && !isLoading
 
-  // ⭐ CLICK IMAGE/VIDEO FROM MODAL
+  // click image/video button in modal
   const triggerMediaUpload = (type) => {
     if (!fileInputRef?.current) {
       console.error('File input ref missing')
+      return
+    }
+
+    // prevent starting new upload while one is in progress
+    if (!isUploaded && uploadProgress > 0) {
+      toast.error('Upload already in progress')
       return
     }
 
@@ -53,6 +61,9 @@ const PostModal = ({
 
   const removeMedia = async () => {
     try {
+      // Cancel any in-progress upload on remove
+      cancelMediaUpload()
+
       if (tempMediaId) {
         await deleteTempMedia(tempMediaId)
       }
@@ -63,8 +74,34 @@ const PostModal = ({
       setCloudUrl(null)
       setIsUploaded(false)
       setTempMediaId(null)
+      toast.success('Media removed')
     } catch (err) {
       console.error('Failed to delete temp media', err)
+      toast.error('Failed to remove media')
+    }
+  }
+
+  // Cancel in-progress upload (user action)
+  const handleCancelUpload = async () => {
+    try {
+      cancelMediaUpload()
+
+      if (tempMediaId) {
+        // if server already created a temp record, delete it
+        await deleteTempMedia(tempMediaId)
+      }
+
+      setMedia(null)
+      setMediaType(null)
+      setMediaPreview(null)
+      setCloudUrl(null)
+      setIsUploaded(false)
+      setTempMediaId(null)
+      // reset progress in parent by emitting something or rely on parent props; here we expect uploadProgress prop to update to 0
+      toast('Upload cancelled', { icon: '✖️' })
+    } catch (err) {
+      console.error('Cancel upload failed', err)
+      toast.error('Failed to cancel upload')
     }
   }
 
@@ -117,6 +154,16 @@ const PostModal = ({
                   {uploadProgress}%
                 </span>
               </div>
+
+              {/* Cancel Upload button */}
+              <div className="mt-3 flex gap-2 justify-center">
+                <button
+                  onClick={handleCancelUpload}
+                  className="px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200"
+                >
+                  Cancel Upload
+                </button>
+              </div>
             </div>
           )}
 
@@ -146,26 +193,25 @@ const PostModal = ({
         {/* Footer */}
         <div className="px-8 py-6 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
           <div className="flex gap-2">
-            {/* ⭐ IMAGE SELECT BUTTON */}
+            {/* disable starting new upload if current upload in progress */}
             <button
               className="p-3 rounded-full hover:bg-blue-50 text-blue-600 transition"
               onClick={(e) => {
                 e.stopPropagation()
                 triggerMediaUpload('image')
               }}
-              disabled={isLoading}
+              disabled={!isUploaded && uploadProgress > 0}
             >
               <IoMdImages className="text-2xl" />
             </button>
 
-            {/* ⭐ VIDEO SELECT BUTTON */}
             <button
               className="p-3 rounded-full hover:bg-green-50 text-green-600 transition"
               onClick={(e) => {
                 e.stopPropagation()
                 triggerMediaUpload('video')
               }}
-              disabled={isLoading}
+              disabled={!isUploaded && uploadProgress > 0}
             >
               <IoMdVideocam className="text-2xl" />
             </button>

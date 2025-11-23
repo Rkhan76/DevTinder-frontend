@@ -1,36 +1,28 @@
+// src/components/homePageComponents/CreatePost/MediaUpload.jsx
 import { IoMdImages, IoMdVideocam } from 'react-icons/io'
 import toast from 'react-hot-toast'
 import { useRef } from 'react'
 
-const MediaUpload = ({ onMediaChange, fileInputRef 
- }) => {
-  
+const MediaUpload = ({ onMediaChange, fileInputRef }) => {
   const handleFileSelect = (type) => {
-  
     if (!fileInputRef.current) {
       console.error('File input not found')
       return
     }
 
-    // Set file type filter
     fileInputRef.current.accept = type === 'image' ? 'image/*' : 'video/*'
-
-    // Clear previous event listeners
     fileInputRef.current.onchange = null
 
-    // Set up new event listener
     fileInputRef.current.onchange = (e) => {
       const file = e.target.files[0]
       if (!file) return
 
-      // Validate file size (10MB limit)
-      const maxSize = 50 * 1024 * 1024
+      const maxSize = 70 * 1024 * 1024
       if (file.size > maxSize) {
         toast.error('File size too large. Maximum size is 50MB.')
         return
       }
 
-      // Validate file type
       if (type === 'image' && !file.type.startsWith('image/')) {
         toast.error('Please select a valid image file')
         return
@@ -41,14 +33,10 @@ const MediaUpload = ({ onMediaChange, fileInputRef
         return
       }
 
-      // If valid, call the parent function
       onMediaChange(file, type)
-
-      // Reset the input for next selection
       e.target.value = ''
     }
 
-    // Trigger the file input click
     fileInputRef.current.click()
   }
 
@@ -68,7 +56,6 @@ const MediaUpload = ({ onMediaChange, fileInputRef
         className="p-3 rounded-full hover:bg-green-50 text-green-600 hover:text-green-700 transition-all duration-200 group"
         onClick={(e) => {
           e.stopPropagation()
-          console.log("Clicked the video icon")
           handleFileSelect('video')
         }}
         title="Add video"
