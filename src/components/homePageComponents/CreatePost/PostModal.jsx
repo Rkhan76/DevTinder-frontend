@@ -2,7 +2,7 @@ import { IoMdImages, IoMdVideocam } from 'react-icons/io'
 import UserAvatar from './UserAvatar'
 import PostForm from './PostForm'
 import LoadingOverlay from './LoadingOverlay'
-import { deleteTempMedia } from '../../../api/mediaApi' // ⭐ ADD THIS
+import { deleteTempMedia } from '../../../api/mediaApi'
 
 const PostModal = ({
   user,
@@ -18,34 +18,53 @@ const PostModal = ({
   setMediaPreview,
   setCloudUrl,
   setIsUploaded,
-  setTempMediaId, // ⭐ add setter for clearing state
+  setTempMediaId,
   onPost,
   onClose,
   isLoading,
   uploadProgress,
-  tempMediaId, // ⭐ tempMediaId comes as prop
- 
+  tempMediaId,
+
+  // ⭐ NEW
+  handleMediaChange,
+  fileInputRef,
 }) => {
   const canPost = (content.trim() || cloudUrl) && !isLoading
+
+  // ⭐ CLICK IMAGE/VIDEO FROM MODAL
+  const triggerMediaUpload = (type) => {
+    if (!fileInputRef?.current) {
+      console.error('File input ref missing')
+      return
+    }
+
+    fileInputRef.current.accept = type === 'image' ? 'image/*' : 'video/*'
+
+    fileInputRef.current.onchange = (e) => {
+      const file = e.target.files[0]
+      if (!file) return
+
+      handleMediaChange(file, type)
+      e.target.value = ''
+    }
+
+    fileInputRef.current.click()
+  }
 
   const removeMedia = async () => {
     try {
       if (tempMediaId) {
-        console.log('🗑️ Deleting temp media:', tempMediaId)
-        await deleteTempMedia(tempMediaId) // ⭐ CALL DELETE API
+        await deleteTempMedia(tempMediaId)
       }
 
-      // Reset all frontend states
       setMedia(null)
       setMediaType(null)
       setMediaPreview(null)
       setCloudUrl(null)
       setIsUploaded(false)
       setTempMediaId(null)
-
-      console.log('✔ Media removed successfully')
     } catch (err) {
-      console.error('❌ Failed to delete temp media', err)
+      console.error('Failed to delete temp media', err)
     }
   }
 
@@ -55,11 +74,11 @@ const PostModal = ({
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-8 py-6 border-b border-gray-100">
           <button
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/80 hover:bg-white shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all duration-200"
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/80 hover:bg-white shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-700 transition"
             onClick={onClose}
             disabled={isLoading}
           >
-            <span className="text-xl font-light">&times;</span>
+            <span className="text-xl">&times;</span>
           </button>
 
           <div className="flex items-center gap-4">
@@ -85,7 +104,7 @@ const PostModal = ({
               <p className="text-gray-700 font-medium animate-pulse text-center">
                 {uploadProgress < 90
                   ? 'Uploading your media...'
-                  : 'Finalizing... Processing by server...'}
+                  : 'Finalizing... Processing...'}
               </p>
 
               <div className="w-full bg-gray-300 rounded-full h-3 relative">
@@ -101,7 +120,7 @@ const PostModal = ({
             </div>
           )}
 
-          {/* Cloudinary Preview */}
+          {/* Preview */}
           {isUploaded && cloudUrl && (
             <>
               {mediaType === 'video' ? (
@@ -114,7 +133,6 @@ const PostModal = ({
                 <img src={cloudUrl} className="w-full rounded-xl mt-4" />
               )}
 
-              {/* REMOVE BUTTON */}
               <button
                 onClick={removeMedia}
                 className="mt-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
@@ -128,16 +146,25 @@ const PostModal = ({
         {/* Footer */}
         <div className="px-8 py-6 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
           <div className="flex gap-2">
+            {/* ⭐ IMAGE SELECT BUTTON */}
             <button
-              className="p-3 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition"
-              onClick={onClose}
+              className="p-3 rounded-full hover:bg-blue-50 text-blue-600 transition"
+              onClick={(e) => {
+                e.stopPropagation()
+                triggerMediaUpload('image')
+              }}
               disabled={isLoading}
             >
               <IoMdImages className="text-2xl" />
             </button>
+
+            {/* ⭐ VIDEO SELECT BUTTON */}
             <button
-              className="p-3 rounded-full hover:bg-green-50 text-green-600 hover:text-green-700 transition"
-              onClick={onClose}
+              className="p-3 rounded-full hover:bg-green-50 text-green-600 transition"
+              onClick={(e) => {
+                e.stopPropagation()
+                triggerMediaUpload('video')
+              }}
               disabled={isLoading}
             >
               <IoMdVideocam className="text-2xl" />

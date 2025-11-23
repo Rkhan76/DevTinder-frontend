@@ -5,7 +5,10 @@ import toast from 'react-hot-toast'
 import PostModal from './PostModal'
 import MediaUpload from './MediaUpload'
 import UserAvatar from './UserAvatar'
-import { handlePostMediaImmediately } from '../../../api/mediaApi'
+import {
+  handlePostMediaImmediately,
+  deleteTempMedia,
+} from '../../../api/mediaApi'
 
 const CreatePost = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -25,10 +28,11 @@ const CreatePost = () => {
 
   const handleOpenModal = () => setModalOpen(true)
 
-  const handleCloseModal = async() => {
+  const handleCloseModal = async () => {
     if (tempMediaId && !isUploaded) {
-    await deleteTempMedia(tempMediaId)
-  }
+      await deleteTempMedia(tempMediaId)
+    }
+
     setModalOpen(false)
     setContent('')
     setMedia(null)
@@ -37,21 +41,19 @@ const CreatePost = () => {
     setUploadProgress(0)
     setCloudUrl(null)
     setIsUploaded(false)
+    setTempMediaId(null)
   }
 
-  // When the user selects media from frontend
+  // ⭐ SAME MEDIA HANDLER USED INSIDE MODAL
   const handleMediaChange = (file, type) => {
-    // 1. Save local file info
     setMedia(file)
     setMediaType(type)
     setMediaPreview(URL.createObjectURL(file))
     setModalOpen(true)
 
-    // 2. Start background upload
     handlePostImmediately(file, type)
   }
 
-  // Upload media immediately after selection
   const handlePostImmediately = async (file, type) => {
     if (!file) return
 
@@ -63,37 +65,23 @@ const CreatePost = () => {
       setIsUploaded(false)
       setCloudUrl(null)
 
-      // Fake progress until 90%
-     const progressInterval = setInterval(() => {
-       setUploadProgress((prev) => {
-         if (prev >= 90) {
-           clearInterval(progressInterval)
-           return prev
-         }
+      const progressInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(progressInterval)
+            return prev
+          }
+          return prev + (prev < 50 ? 3 : prev < 80 ? 2 : 1)
+        })
+      }, 500)
 
-         // Dynamic speed:
-         let increment = 0
-
-         if (prev < 50) increment = 3 // fast start
-         else if (prev < 80) increment = 2 // medium
-         else increment = 1 // slow near 90%
-
-         return prev + increment
-       })
-     }, 500)
-
-
-      // Actual upload API call
       const res = await handlePostMediaImmediately(formData)
-
-      console.log("response of handlePostMediaImmidiatly : ", res)
 
       clearInterval(progressInterval)
       setUploadProgress(100)
 
       if (res.success) {
-        // ⭐ Save cloudinary URL and mark upload complete
-        setTempMediaId(res.tempMediaId) 
+        setTempMediaId(res.tempMediaId)
         setCloudUrl(res.url)
         setIsUploaded(true)
 
@@ -104,29 +92,19 @@ const CreatePost = () => {
       }
     } catch (err) {
       console.error(err)
-      toast.error('Something went wrong while posting')
+      toast.error('Something went wrong while uploading')
       setUploadProgress(0)
     }
   }
 
-  // Final create post button
   const handlePost = async () => {
-    if (!content.trim() && !media) {
+    if (!content.trim() && !cloudUrl) {
       toast.error('Post content or media required')
       return
     }
-
-    const formData = new FormData()
-    formData.append('content', content)
-
-    // If media was uploaded — save Cloudinary URL instead of file
-    if (isUploaded && cloudUrl) {
-      formData.append('mediaUrl', cloudUrl)
-      formData.append('mediaType', mediaType)
-    }
-
+     console.log(tempMediaId)
     try {
-      const res = await addPost(formData)
+      const res = await addPost(content, tempMediaId)
       if (res.success) {
         toast.success('Post created successfully')
         handleCloseModal()
@@ -179,6 +157,10 @@ const CreatePost = () => {
           isUploaded={isUploaded}
           tempMediaId={tempMediaId}
           setCloudUrl={setCloudUrl}
+          setTempMediaId={setTempMediaId}
+          setIsUploaded={setIsUploaded}
+          fileInputRef={fileInputRef}
+          handleMediaChange={handleMediaChange} // ⭐ NEW
         />
       )}
     </>

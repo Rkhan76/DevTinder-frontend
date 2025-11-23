@@ -120,7 +120,9 @@ const PostCard = ({ post }) => {
       />
 
       {/* Media */}
-      <PostMedia media={displayPost.media} isRepost={isRepost} />
+      {displayPost.media && displayPost.media.length > 0 && (
+        <PostMedia media={displayPost.media} isRepost={isRepost} />
+      )}
 
       {/* Footer */}
       <div className="px-6 bg-white rounded-2xl">

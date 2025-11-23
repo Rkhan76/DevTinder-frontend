@@ -5,10 +5,10 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL
 /* ===========================================
    CREATE POST
 =========================================== */
-export const addPost = async (formData) => {
+export const addPost = async (content, tempMediaId) => {
   const api = `${BASE_URL}/posts`
   try {
-    const response = await axios.post(api, formData)
+    const response = await axios.post(api, { content, tempMediaId })
     return response.data
   } catch (error) {
     console.error('Add post failed:', error)
