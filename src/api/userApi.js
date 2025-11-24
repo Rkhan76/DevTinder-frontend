@@ -6,7 +6,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL
    GET USER BY ID
 ============================================ */
 export const getUserById = async (userId) => {
-  const api = `${BASE_URL}/users/${userId}` // UPDATED
+  const api = `${BASE_URL}/users/${userId}` 
   try {
     const response = await axios.get(api)
     return response.data

@@ -231,13 +231,13 @@ const PostActionMenu = ({ isOwner = false, postId, onClose }) => {
 
           <div className="border-t border-gray-100 my-1"></div>
 
-          <button
+          {/* <button
             onClick={handleReportPost}
             className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
           >
             <FaFlag className="text-red-500 text-sm" />
             Report Post
-          </button>
+          </button> */}
 
           <button
             onClick={handleUnfollowAuthor}
@@ -247,15 +247,15 @@ const PostActionMenu = ({ isOwner = false, postId, onClose }) => {
             UnFriend Author
           </button>
 
-          <button
+          {/* <button
             onClick={handleHidePost}
             className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
           >
             <FaEyeSlash className="text-gray-500 text-sm" />
             Hide Post
-          </button>
+          </button> */}
 
-          <div className="border-t border-gray-100 my-1"></div>
+          {/* <div className="border-t border-gray-100 my-1"></div>
 
           <button
             onClick={handleBlockUser}
@@ -271,7 +271,7 @@ const PostActionMenu = ({ isOwner = false, postId, onClose }) => {
           >
             <FaBellSlash className="text-gray-500 text-sm" />
             Mute Notifications
-          </button>
+          </button> */}
         </div>
       )}
 
