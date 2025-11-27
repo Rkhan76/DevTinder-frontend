@@ -1,10 +1,21 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(),],
+  plugins: [
+    react(),
+    tailwindcss(),
+    visualizer({
+      open: true, // Automatically open report
+      gzipSize: true, // Show gzip sizes
+      brotliSize: true, // Show brotli sizes
+      filename: 'bundle-visualizer.html',
+    }),
+  ],
+
   define: {
     __VITE_FIREBASE_API_KEY__: JSON.stringify(
       process.env.VITE_FIREBASE_API_KEY

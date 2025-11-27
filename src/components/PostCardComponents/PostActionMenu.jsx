@@ -13,6 +13,7 @@ import {
   FaBan,
   FaBellSlash,
 } from 'react-icons/fa'
+import { CiBookmark } from 'react-icons/ci'
 import DeleteConfirmationModal from './DeleteConfirmationModal'
 import { deletePost, savePost } from '../../api/postApi'
 import toast from 'react-hot-toast'

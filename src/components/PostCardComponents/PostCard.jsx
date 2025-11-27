@@ -32,6 +32,7 @@ const PostCard = ({ post }) => {
     media,
     likedBy = [],
     comments = [],
+    bookmarkedBy=[],
     author,
     repost,
   } = post

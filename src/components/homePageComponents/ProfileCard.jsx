@@ -1,11 +1,13 @@
 import { CheckCircle } from 'lucide-react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 export default function ProfileCard() {
   const user = useSelector((state) => state.auth.user)
 
   if (!user) return null
 
+  console.log(user, " user data")
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-4">
       {/* Profile info */}
@@ -24,9 +26,11 @@ export default function ProfileCard() {
 
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-bold text-slate-900">
-              {user.fullName}
-            </h3>
+            <Link to={`/profile/${user._id}`}>
+              <h3 className="text-lg font-bold text-slate-900">
+                {user.fullName}
+              </h3>
+            </Link>
 
             {true && <CheckCircle className="w-5 h-5 text-blue-600" />}
           </div>
